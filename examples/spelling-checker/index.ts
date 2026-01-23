@@ -42,7 +42,7 @@ for (const [wrong, _correct] of misspelledWords) {
   // Red curly underline for spelling errors (like VS Code)
   highlightedText = highlightedText.replace(
     new RegExp(`\\b${wrong}\\b`, "gi"),
-    styledUnderline("curly", [255, 100, 100], wrong)
+    styledUnderline("curly", [255, 100, 100], wrong),
   );
 }
 console.log(highlightedText);
@@ -51,7 +51,7 @@ console.log(highlightedText);
 console.log("\n" + chalk.bold("Suggested corrections:") + "\n");
 for (const [wrong, correct] of misspelledWords) {
   console.log(
-    `  ${styledUnderline("curly", [255, 100, 100], wrong)} → ${chalk.green(correct)}`
+    `  ${styledUnderline("curly", [255, 100, 100], wrong)} → ${chalk.green(correct)}`,
   );
 }
 
@@ -59,10 +59,30 @@ for (const [wrong, correct] of misspelledWords) {
 console.log("\n" + chalk.bold("Error type indicators:") + "\n");
 
 const errorTypes = [
-  { style: "curly" as const, color: [255, 100, 100] as [number, number, number], label: "Spelling error", example: "mispeled" },
-  { style: "curly" as const, color: [255, 200, 100] as [number, number, number], label: "Grammar warning", example: "they is" },
-  { style: "dashed" as const, color: [100, 180, 255] as [number, number, number], label: "Style suggestion", example: "utilize" },
-  { style: "dotted" as const, color: [180, 180, 180] as [number, number, number], label: "Hint", example: "TODO" },
+  {
+    style: "curly" as const,
+    color: [255, 100, 100] as [number, number, number],
+    label: "Spelling error",
+    example: "mispeled",
+  },
+  {
+    style: "curly" as const,
+    color: [255, 200, 100] as [number, number, number],
+    label: "Grammar warning",
+    example: "they is",
+  },
+  {
+    style: "dashed" as const,
+    color: [100, 180, 255] as [number, number, number],
+    label: "Style suggestion",
+    example: "utilize",
+  },
+  {
+    style: "dotted" as const,
+    color: [180, 180, 180] as [number, number, number],
+    label: "Hint",
+    example: "TODO",
+  },
 ];
 
 for (const { style, color, label, example } of errorTypes) {
@@ -84,14 +104,30 @@ for (const line of codeLines) {
 }
 
 console.log("\n" + chalk.dim("Legend:"));
-console.log(chalk.dim(`  ${styledUnderline("curly", [255, 100, 100], "red")} = error`));
-console.log(chalk.dim(`  ${styledUnderline("curly", [255, 200, 100], "yellow")} = warning`));
-console.log(chalk.dim(`  ${styledUnderline("dashed", [100, 180, 255], "blue")} = suggestion`));
-console.log(chalk.dim(`  ${styledUnderline("dotted", [180, 180, 180], "gray")} = hint`));
+console.log(
+  chalk.dim(`  ${styledUnderline("curly", [255, 100, 100], "red")} = error`),
+);
+console.log(
+  chalk.dim(
+    `  ${styledUnderline("curly", [255, 200, 100], "yellow")} = warning`,
+  ),
+);
+console.log(
+  chalk.dim(
+    `  ${styledUnderline("dashed", [100, 180, 255], "blue")} = suggestion`,
+  ),
+);
+console.log(
+  chalk.dim(`  ${styledUnderline("dotted", [180, 180, 180], "gray")} = hint`),
+);
 
 // Hyperlinks for more info
 console.log("\n" + chalk.bold("Learn more:") + "\n");
-console.log(`  ${hyperlink("VS Code Diagnostics", "https://code.visualstudio.com/api/language-extensions/diagnostics")}`);
-console.log(`  ${hyperlink("LSP Specification", "https://microsoft.github.io/language-server-protocol/")}`);
+console.log(
+  `  ${hyperlink("VS Code Diagnostics", "https://code.visualstudio.com/api/language-extensions/diagnostics")}`,
+);
+console.log(
+  `  ${hyperlink("LSP Specification", "https://microsoft.github.io/language-server-protocol/")}`,
+);
 
 console.log("\n" + "=".repeat(60));

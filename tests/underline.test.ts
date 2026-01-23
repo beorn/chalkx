@@ -13,7 +13,10 @@ import {
   underlineColor,
   styledUnderline,
 } from "../src/underline.js";
-import { setExtendedUnderlineSupport, resetDetectionCache } from "../src/detection.js";
+import {
+  setExtendedUnderlineSupport,
+  resetDetectionCache,
+} from "../src/detection.js";
 import { stripAnsi } from "../src/utils.js";
 
 describe("extended underlines", () => {

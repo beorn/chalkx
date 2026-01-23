@@ -4,7 +4,10 @@
 
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { ANSI_REGEX, stripAnsi, displayLength } from "../src/utils.js";
-import { setExtendedUnderlineSupport, resetDetectionCache } from "../src/detection.js";
+import {
+  setExtendedUnderlineSupport,
+  resetDetectionCache,
+} from "../src/detection.js";
 import { curlyUnderline, underlineColor } from "../src/underline.js";
 import { hyperlink } from "../src/hyperlink.js";
 
@@ -22,7 +25,9 @@ describe("ANSI utilities", () => {
     });
 
     it("matches OSC 8 hyperlink sequences", () => {
-      expect("\x1b]8;;https://example.com\x1b\\".match(ANSI_REGEX)).toBeTruthy();
+      expect(
+        "\x1b]8;;https://example.com\x1b\\".match(ANSI_REGEX),
+      ).toBeTruthy();
       expect("\x1b]8;;\x1b\\".match(ANSI_REGEX)).toBeTruthy();
     });
   });

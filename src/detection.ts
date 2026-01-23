@@ -28,11 +28,7 @@ const SUPPORTED_TERMS = [
 /**
  * Known terminal programs with extended underline support.
  */
-const SUPPORTED_PROGRAMS = [
-  "Ghostty",
-  "iTerm.app",
-  "WezTerm",
-];
+const SUPPORTED_PROGRAMS = ["Ghostty", "iTerm.app", "WezTerm"];
 
 /**
  * Detect if the terminal supports extended underline styles.
