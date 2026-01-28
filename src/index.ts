@@ -40,6 +40,21 @@
 export { createTerm } from "./term.js"
 export type { Term, StyleChain } from "./term.js"
 
+import { createTerm as _createTerm } from "./term.js"
+/**
+ * Default term instance for convenience.
+ * Use this for simple scripts. For apps, prefer createTerm() with `using`.
+ *
+ * @example
+ * ```ts
+ * import { term } from '@beorn/chalkx'
+ *
+ * console.log(term.green('success'))
+ * if (term.hasColor()) { ... }
+ * ```
+ */
+export const term = _createTerm()
+
 export { patchConsole } from "./patch-console.js"
 export type { PatchedConsole } from "./patch-console.js"
 

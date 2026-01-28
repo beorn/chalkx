@@ -3,9 +3,78 @@
 [![npm version](https://img.shields.io/npm/v/@beorn/chalkx.svg)](https://www.npmjs.com/package/@beorn/chalkx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Extended chalk with modern terminal features that chalk doesn't support: curly/dotted/dashed underlines, independent underline color, and OSC 8 hyperlinks.
+Terminal primitives with Disposable pattern support, plus extended ANSI features (curly underlines, hyperlinks).
 
-## Quick Start
+## Quick Start (NewWay)
+
+The primary API is the `Term` instance with Disposable support:
+
+```typescript
+import { createTerm } from "@beorn/chalkx";
+
+// Create term (Disposable pattern)
+using term = createTerm();
+
+// Flattened styling - term IS the style chain
+term.red("error");
+term.bold.green("success");
+term.rgb(255, 100, 0).bold("orange bold");
+
+// Terminal capability detection
+term.hasColor();    // 'basic' | '256' | 'truecolor' | null
+term.hasCursor();   // boolean - can reposition cursor?
+term.hasInput();    // boolean - can read raw keystrokes?
+term.hasUnicode();  // boolean - can render unicode?
+
+// Dimensions
+console.log(`${term.cols}x${term.rows}`);
+```
+
+### Console Capture
+
+```typescript
+import { createTerm, patchConsole } from "@beorn/chalkx";
+
+using term = createTerm();
+using patched = patchConsole(console);
+
+// All console calls are captured
+console.log("hello");
+console.error("oops");
+
+// Read captured entries
+patched.getSnapshot();  // ConsoleEntry[]
+
+// Subscribe to changes (useSyncExternalStore compatible)
+const unsubscribe = patched.subscribe(() => {
+  const entries = patched.getSnapshot();
+});
+```
+
+### Default Term for Simple Scripts
+
+For quick scripts that don't need Disposable cleanup, use the pre-created default `term`:
+
+```typescript
+import { term } from "@beorn/chalkx";
+
+console.log(term.green("success"));
+console.log(`Terminal size: ${term.cols}x${term.rows}`);
+```
+
+### Testing with Capability Overrides
+
+```typescript
+// Force specific capabilities for testing
+using term = createTerm({ color: null });        // No colors
+using term = createTerm({ color: 'truecolor' }); // Force truecolor
+using term = createTerm({ unicode: false });     // Force ASCII
+using term = createTerm({ cursor: false });      // No cursor control
+```
+
+## Extended ANSI Features
+
+Beyond the Term API, chalkx provides extended ANSI features:
 
 ```typescript
 import { curlyUnderline, hyperlink, chalk } from "@beorn/chalkx";
@@ -21,6 +90,16 @@ console.log(chalk.red(curlyUnderline("Error: typo detected")));
 ```
 
 ## Features
+
+### Term Primitives
+
+- **Terminal detection** - `hasCursor()`, `hasInput()`, `hasColor()`, `hasUnicode()`
+- **Flattened styling** - `term.bold.red('text')` - term IS the style chain
+- **Disposable pattern** - Automatic cleanup with `using term = createTerm()`
+- **Console capture** - `patchConsole()` intercepts console calls
+- **Testable** - Inject mock capabilities without global mocking
+
+### Extended ANSI
 
 - **Extended underline styles** - curly (wavy), dotted, dashed, double
 - **Independent underline color** - set underline color separately from text color
