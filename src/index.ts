@@ -1,56 +1,82 @@
 /**
- * @beorn/chalkx - Extended Chalk with Modern Terminal Features
+ * @beorn/chalkx - Terminal Primitives and Extended ANSI Features
  *
- * Extends chalk with features not natively supported:
+ * Core terminal abstraction with Disposable pattern support plus
+ * extended ANSI features not natively supported by chalk:
  * - Extended underline styles (curly, dotted, dashed, double)
  * - Independent underline color
  * - Hyperlinks (OSC 8)
  *
- * Features graceful fallback for unsupported terminals.
+ * ## NewWay API (Preferred)
  *
- * ## Terminal Support
+ * ```ts
+ * import { createTerm, patchConsole } from '@beorn/chalkx'
  *
- * | Feature           | Ghostty | Kitty | WezTerm | iTerm2 | Terminal.app |
- * |-------------------|---------|-------|---------|--------|--------------|
- * | Curly underline   | ✓       | ✓     | ✓       | ✓      | ✗ (fallback) |
- * | Dotted underline  | ✓       | ✓     | ✓       | ✓      | ✗ (fallback) |
- * | Dashed underline  | ✓       | ✓     | ✓       | ✓      | ✗ (fallback) |
- * | Double underline  | ✓       | ✓     | ✓       | ✓      | ✗ (fallback) |
- * | Underline color   | ✓       | ✓     | ✓       | ✓      | ✗ (ignored)  |
- * | Hyperlinks        | ✓       | ✓     | ✓       | ✓      | ✓            |
+ * // Create term (Disposable)
+ * using term = createTerm()
  *
- * @see https://sw.kovidgoyal.net/kitty/underlines/
- * @see https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+ * // Detection
+ * term.hasCursor()    // boolean
+ * term.hasInput()     // boolean
+ * term.hasColor()     // 'basic' | '256' | 'truecolor' | null
+ * term.hasUnicode()   // boolean
+ *
+ * // Styling (flattened, chainable)
+ * term.red('error')
+ * term.bold.green('success')
+ *
+ * // Console interception
+ * using patched = patchConsole(console)
+ * patched.subscribe(() => console.log('new entry'))
+ * ```
  *
  * @packageDocumentation
  */
 
-import chalk from "chalk";
-
 // =============================================================================
-// Re-export Types
+// Term API (NewWay)
 // =============================================================================
 
-export type { UnderlineStyle, RGB } from "./types.js";
+export { createTerm } from "./term.js"
+export type { Term, StyleChain } from "./term.js"
+
+export { patchConsole } from "./patch-console.js"
+export type { PatchedConsole } from "./patch-console.js"
 
 // =============================================================================
-// Re-export Utilities (also available via @beorn/chalkx/utils)
+// Types
 // =============================================================================
 
-export { ANSI_REGEX, stripAnsi, displayLength } from "./utils.js";
+export type {
+  UnderlineStyle,
+  RGB,
+  ColorLevel,
+  StyleOptions,
+  ConsoleMethod,
+  ConsoleEntry,
+  CreateTermOptions,
+} from "./types.js"
 
 // =============================================================================
-// Re-export Detection
+// Detection Functions
 // =============================================================================
 
 export {
-  supportsExtendedUnderline,
-  setExtendedUnderlineSupport,
-  resetDetectionCache,
-} from "./detection.js";
+  detectCursor,
+  detectInput,
+  detectColor,
+  detectUnicode,
+  detectExtendedUnderline,
+} from "./detection.js"
 
 // =============================================================================
-// Re-export Underline Functions
+// Utilities
+// =============================================================================
+
+export { ANSI_REGEX, stripAnsi, displayLength } from "./utils.js"
+
+// =============================================================================
+// Underline Functions
 // =============================================================================
 
 export {
@@ -61,13 +87,13 @@ export {
   doubleUnderline,
   underlineColor,
   styledUnderline,
-} from "./underline.js";
+} from "./underline.js"
 
 // =============================================================================
-// Re-export Hyperlink Functions
+// Hyperlink Functions
 // =============================================================================
 
-export { hyperlink } from "./hyperlink.js";
+export { hyperlink } from "./hyperlink.js"
 
 // =============================================================================
 // Background Override (for inkx compatibility)
@@ -78,7 +104,7 @@ export { hyperlink } from "./hyperlink.js";
  * When text is wrapped with this, inkx won't warn/throw about chalk bg + inkx bg conflicts.
  * Exported for inkx to detect this marker in text content.
  */
-export const BG_OVERRIDE_CODE = 9999;
+export const BG_OVERRIDE_CODE = 9999
 
 /**
  * Wrap text with a marker that tells inkx this background color is intentional.
@@ -101,77 +127,56 @@ export const BG_OVERRIDE_CODE = 9999;
  * ```
  */
 export function bgOverride(text: string): string {
-  return `\x1b[${BG_OVERRIDE_CODE}m${text}`;
+  return `\x1b[${BG_OVERRIDE_CODE}m${text}`
 }
 
 // =============================================================================
-// Re-export Chalk
+// OldWay Exports (to be removed in Phase 2)
 // =============================================================================
+
+import chalk from "chalk"
 
 /**
- * Re-export chalk for convenience.
- * Users can import everything from @beorn/chalkx instead of needing both packages.
+ * @deprecated Use createTerm() instead.
+ * Re-export of chalk for convenience.
  */
-export { chalk };
-
-// =============================================================================
-// Convenience Object
-// =============================================================================
+export { chalk }
 
 // Import functions for the convenience object
-import { stripAnsi, displayLength } from "./utils.js";
-import { supportsExtendedUnderline } from "./detection.js";
+import { stripAnsi, displayLength } from "./utils.js"
+import { supportsExtendedUnderline } from "./detection.js"
 import {
-  curlyUnderline,
-  dottedUnderline,
-  dashedUnderline,
-  doubleUnderline,
-  underlineColor,
-  styledUnderline,
-} from "./underline.js";
-import { hyperlink } from "./hyperlink.js";
+  curlyUnderline as _curlyUnderline,
+  dottedUnderline as _dottedUnderline,
+  dashedUnderline as _dashedUnderline,
+  doubleUnderline as _doubleUnderline,
+  underlineColor as _underlineColor,
+  styledUnderline as _styledUnderline,
+} from "./underline.js"
+import { hyperlink as _hyperlink } from "./hyperlink.js"
 
 /**
- * Extended chalk instance with all standard chalk methods plus extensions.
- *
- * @example
- * ```ts
- * import { chalkX } from '@beorn/chalkx';
- *
- * // Standard chalk methods
- * chalkX.red('error');
- * chalkX.bold.blue('important');
- *
- * // Extended features
- * chalkX.curlyUnderline('misspelled');
- * chalkX.hyperlink('Click here', 'https://example.com');
- * ```
+ * @deprecated Use createTerm() instead.
+ * Convenience object combining chalk methods with chalkx extensions.
  */
 export const chalkX = {
-  // All chalk methods (spread doesn't work well with chalk's proxy)
-  // Users should use chalk directly for color methods
   ...chalk,
-
-  // Extended underlines
-  curlyUnderline,
-  dottedUnderline,
-  dashedUnderline,
-  doubleUnderline,
-  underlineColor,
-  styledUnderline,
-
-  // Hyperlinks
-  hyperlink,
-
-  // Utilities
+  curlyUnderline: _curlyUnderline,
+  dottedUnderline: _dottedUnderline,
+  dashedUnderline: _dashedUnderline,
+  doubleUnderline: _doubleUnderline,
+  underlineColor: _underlineColor,
+  styledUnderline: _styledUnderline,
+  hyperlink: _hyperlink,
   stripAnsi,
   displayLength,
-
-  // Capability detection
   supportsExtendedUnderline,
-
-  // InkX compatibility
   bgOverride,
-};
+}
 
-export default chalkX;
+export default chalkX
+
+/**
+ * @deprecated Use detectExtendedUnderline() instead.
+ */
+export { supportsExtendedUnderline, setExtendedUnderlineSupport, resetDetectionCache } from "./detection.js"
