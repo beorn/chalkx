@@ -1,21 +1,23 @@
-# @beorn/chalkx - Terminal Primitives and Extended ANSI Features
+# chalkx - Terminal Primitives and Extended ANSI Features
 
 Core terminal abstraction with Disposable pattern support plus extended ANSI features (curly underlines, hyperlinks).
+
+**Note:** If you're also using `inkx`, import term primitives from `inkx` instead - it re-exports everything from chalkx. Only import directly from `chalkx` for extended ANSI features not re-exported by inkx.
 
 ## Imports
 
 ```ts
 // Term API (main)
-import { createTerm, patchConsole } from '@beorn/chalkx'
+import { createTerm, patchConsole } from 'chalkx'
 
 // Types
-import type { Term, StyleChain, PatchedConsole, ColorLevel, ConsoleEntry } from '@beorn/chalkx'
+import type { Term, StyleChain, PatchedConsole, ColorLevel, ConsoleEntry } from 'chalkx'
 
 // Detection (usually accessed via term instance)
-import { detectColor, detectCursor, detectInput, detectUnicode } from '@beorn/chalkx'
+import { detectColor, detectCursor, detectInput, detectUnicode } from 'chalkx'
 
 // Utilities
-import { stripAnsi, displayLength, hyperlink, curlyUnderline } from '@beorn/chalkx'
+import { stripAnsi, displayLength, hyperlink, curlyUnderline } from 'chalkx'
 ```
 
 ## Common Patterns
@@ -23,7 +25,7 @@ import { stripAnsi, displayLength, hyperlink, curlyUnderline } from '@beorn/chal
 ### Basic Usage
 
 ```ts
-import { createTerm } from '@beorn/chalkx'
+import { createTerm } from 'chalkx'
 
 // Create term (Disposable)
 using term = createTerm()
@@ -60,7 +62,7 @@ term.writeLine(term.dim('details here'))
 ### Console Patching
 
 ```ts
-import { patchConsole } from '@beorn/chalkx'
+import { patchConsole } from 'chalkx'
 
 // Patch console - Disposable
 using patched = patchConsole(console)
@@ -95,7 +97,7 @@ using term = createTerm({ stdout: mockStream, stdin: mockStdin })
 ### Extended Underlines
 
 ```ts
-import { curlyUnderline, dottedUnderline, hyperlink } from '@beorn/chalkx'
+import { curlyUnderline, dottedUnderline, hyperlink } from 'chalkx'
 
 // Wavy underline (spell-check style)
 curlyUnderline('misspelled')
@@ -114,13 +116,25 @@ term.red(curlyUnderline('error'))
 ```ts
 // WRONG - loses color level synchronization
 import chalk from 'chalk'
-import { createTerm } from '@beorn/chalkx'
+import { createTerm } from 'chalkx'
 
 using term = createTerm({ color: null })
 chalk.red('still colored!')  // chalk doesn't know about term's color setting
 
 // RIGHT - use term's styling
 term.red('properly no-color')
+```
+
+### Wrong: Using .style() (removed API)
+
+```ts
+// WRONG - .style() method was removed
+term.style().red('error')
+term.style().bold.green('success')
+
+// RIGHT - term IS the style chain directly
+term.red('error')
+term.bold.green('success')
 ```
 
 ### Wrong: Forgetting Disposable cleanup
