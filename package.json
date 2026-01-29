@@ -1,5 +1,5 @@
 {
-  "name": "@beorn/chalkx",
+  "name": "chalkx",
   "version": "0.1.0",
   "description": "Extended chalk with modern terminal features (curly/dotted/dashed underlines, underline color, hyperlinks)",
   "type": "module",
