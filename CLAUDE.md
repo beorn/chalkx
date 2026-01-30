@@ -2,7 +2,10 @@
 
 Core terminal abstraction with Disposable pattern support plus extended ANSI features (curly underlines, hyperlinks).
 
-**Note:** If you're also using `inkx`, import term primitives from `inkx` instead - it re-exports everything from chalkx. Only import directly from `chalkx` for extended ANSI features not re-exported by inkx.
+**Note:** If you're building a TUI with `inkx`, import term primitives from `inkx`:
+
+- **From inkx:** `createTerm`, `term`, `patchConsole`, `Term`, `StyleChain`, `PatchedConsole`, `ColorLevel`, `ConsoleEntry`
+- **From chalkx only:** `curlyUnderline`, `hyperlink`, `bgOverride`, `displayLength`, `styledUnderline`, `underlineColor`, detection functions
 
 ## Imports
 
@@ -158,6 +161,15 @@ try {
   term[Symbol.dispose]()
 }
 ```
+
+## Deprecated APIs
+
+| Deprecated                       | Use Instead                       |
+| -------------------------------- | --------------------------------- |
+| `import chalkX from 'chalkx'`    | `import { createTerm } from 'chalkx'` |
+| `import { chalk } from 'chalkx'` | `term.red()` etc via createTerm   |
+| `setExtendedUnderlineSupport()`  | `detectExtendedUnderline()`       |
+| `supportsExtendedUnderline()`    | `detectExtendedUnderline()`       |
 
 ## Key Types
 

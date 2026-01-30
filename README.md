@@ -51,6 +51,20 @@ const unsubscribe = patched.subscribe(() => {
 });
 ```
 
+### Using with inkx
+
+If you're building a TUI app with [inkx](https://github.com/beorn/inkx), import term primitives from `inkx` directly - it re-exports everything from chalkx:
+
+```typescript
+// Preferred for inkx apps - one import source
+import { render, Box, Text, createTerm, patchConsole } from "inkx"
+
+// Only import from chalkx for extended ANSI features not re-exported
+import { curlyUnderline, hyperlink, bgOverride } from "@beorn/chalkx"
+```
+
+For CLI tools, scripts, or non-inkx projects, import directly from chalkx as shown above.
+
 ### Default Term for Simple Scripts
 
 For quick scripts that don't need Disposable cleanup, use the pre-created default `term`:
@@ -468,6 +482,8 @@ setExtendedUnderlineSupport(false); // Force fallback mode
 setExtendedUnderlineSupport(null); // Re-detect
 ```
 
+> **Deprecated:** `setExtendedUnderlineSupport()` and `supportsExtendedUnderline()` are deprecated. Use `detectExtendedUnderline()` or pass capability overrides to `createTerm()`.
+
 ---
 
 # References
@@ -479,6 +495,33 @@ setExtendedUnderlineSupport(null); // Re-detect
 - [ITU T.416](https://www.itu.int/rec/T-REC-T.416/en) - ISO 8613-6, defines underline color
 - [Terminal Feature Detection](https://github.com/termstandard/colors) - Color/feature detection methods
 - [Kitty Graphics Protocol](https://sw.kovidgoyal.net/kitty/graphics-protocol/) - Inline images
+
+---
+
+## Anti-Patterns
+
+### Using chalk directly with term
+
+```typescript
+// WRONG - loses color level synchronization
+import chalk from "chalk"
+using term = createTerm({ color: null })
+chalk.red("still colored!")  // chalk ignores term's color setting
+
+// RIGHT - use term's styling
+term.red("properly no-color")
+```
+
+### Using deprecated chalkX object
+
+```typescript
+// WRONG - deprecated, will be removed
+import chalkX from "@beorn/chalkx"
+
+// RIGHT - use createTerm
+import { createTerm } from "@beorn/chalkx"
+using term = createTerm()
+```
 
 ---
 
