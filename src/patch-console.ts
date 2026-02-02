@@ -23,11 +23,27 @@ const METHODS: ConsoleMethod[] = ["log", "info", "warn", "error", "debug"]
 
 const STDERR_METHODS = new Set<ConsoleMethod>(["error", "warn"])
 
+export interface PatchConsoleOptions {
+  /**
+   * Suppress original console output when true.
+   * Use in TUI mode where you want console output only in a component.
+   */
+  suppress?: boolean
+}
+
 /**
  * Patch console methods to intercept and accumulate entries.
  * Returns a disposable that restores original methods.
+ *
+ * @param console - The console object to patch
+ * @param options - Configuration options
+ * @param options.suppress - If true, don't call original methods (for TUI mode)
  */
-export function patchConsole(console: Console): PatchedConsole {
+export function patchConsole(
+  console: Console,
+  options?: PatchConsoleOptions,
+): PatchedConsole {
+  const suppress = options?.suppress ?? false
   const entries: ConsoleEntry[] = []
   const subscribers = new Set<() => void>()
 
@@ -48,8 +64,10 @@ export function patchConsole(console: Console): PatchedConsole {
       }
       entries.push(entry)
 
-      // Call original
-      original(...args)
+      // Call original unless suppressed (TUI mode)
+      if (!suppress) {
+        original(...args)
+      }
 
       // Notify subscribers
       subscribers.forEach((subscriber) => subscriber())
