@@ -162,15 +162,6 @@ try {
 }
 ```
 
-## Deprecated APIs
-
-| Deprecated                       | Use Instead                       |
-| -------------------------------- | --------------------------------- |
-| `import chalkX from 'chalkx'`    | `import { createTerm } from 'chalkx'` |
-| `import { chalk } from 'chalkx'` | `term.red()` etc via createTerm   |
-| `setExtendedUnderlineSupport()`  | `detectExtendedUnderline()`       |
-| `supportsExtendedUnderline()`    | `detectExtendedUnderline()`       |
-
 ## Key Types
 
 | Type | Description |

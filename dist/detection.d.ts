@@ -1,25 +1,44 @@
 /**
- * Terminal capability detection for extended ANSI features.
+ * Terminal capability detection.
  *
- * Detects support for:
- * - Extended underline styles (curly, dotted, dashed, double)
- * - Underline color (SGR 58)
- * - Hyperlinks (OSC 8)
+ * Detects:
+ * - Cursor control (can reposition cursor)
+ * - Input capability (can read raw keystrokes)
+ * - Color level (basic, 256, truecolor)
+ * - Unicode support (can render unicode symbols)
+ * - Extended underline support (curly, dotted, etc)
  */
+import type { ColorLevel } from "./types.js";
 /**
- * Check if the terminal supports extended underline styles.
- * Result is cached after first call.
+ * Detect if terminal supports cursor control (repositioning).
+ * Returns false for dumb terminals and piped output.
  */
-export declare function supportsExtendedUnderline(): boolean;
+export declare function detectCursor(stdout: NodeJS.WriteStream): boolean;
 /**
- * Override extended underline support detection.
- * Useful for testing or forcing behavior in specific environments.
+ * Detect if terminal can read raw keystrokes.
+ * Requires stdin to be a TTY with raw mode support.
+ */
+export declare function detectInput(stdin: NodeJS.ReadStream): boolean;
+/**
+ * Detect color level supported by terminal.
+ * Returns null if no color support.
  *
- * @param supported - true/false to force, null to re-detect on next call
+ * Checks (in order):
+ * 1. NO_COLOR env var - forces no color
+ * 2. FORCE_COLOR env var - forces color level
+ * 3. COLORTERM=truecolor - truecolor support
+ * 4. TERM patterns - detect from terminal type
+ * 5. CI detection - basic colors in CI
  */
-export declare function setExtendedUnderlineSupport(supported: boolean | null): void;
+export declare function detectColor(stdout: NodeJS.WriteStream): ColorLevel | null;
 /**
- * Reset detection cache, forcing re-detection on next call.
+ * Detect if terminal can render unicode symbols.
+ * Based on TERM, locale, and known terminal apps.
  */
-export declare function resetDetectionCache(): void;
+export declare function detectUnicode(): boolean;
+/**
+ * Detect if terminal supports extended underline styles.
+ * (curly, dotted, dashed, double)
+ */
+export declare function detectExtendedUnderline(): boolean;
 //# sourceMappingURL=detection.d.ts.map

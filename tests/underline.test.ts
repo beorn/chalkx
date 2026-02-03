@@ -13,22 +13,29 @@ import {
   underlineColor,
   styledUnderline,
 } from "../src/underline.js";
-import {
-  setExtendedUnderlineSupport,
-  resetDetectionCache,
-} from "../src/detection.js";
 import { stripAnsi } from "../src/utils.js";
 
 describe("extended underlines", () => {
+  // Save original env values
+  const origTerm = process.env.TERM;
+  const origTermProgram = process.env.TERM_PROGRAM;
+  const origKitty = process.env.KITTY_WINDOW_ID;
+
+  afterEach(() => {
+    // Restore env after each test
+    if (origTerm !== undefined) process.env.TERM = origTerm;
+    else delete process.env.TERM;
+    if (origTermProgram !== undefined) process.env.TERM_PROGRAM = origTermProgram;
+    else delete process.env.TERM_PROGRAM;
+    if (origKitty !== undefined) process.env.KITTY_WINDOW_ID = origKitty;
+    else delete process.env.KITTY_WINDOW_ID;
+  });
+
   describe("with support enabled", () => {
     beforeEach(() => {
-      setExtendedUnderlineSupport(true);
-      // Force chalk to output ANSI in test environment
+      // Force env to trigger detectExtendedUnderline() === true
+      process.env.TERM = "xterm-ghostty";
       chalk.level = 3;
-    });
-
-    afterEach(() => {
-      resetDetectionCache();
     });
 
     it("underline with style='single' uses chalk underline", () => {
@@ -66,13 +73,11 @@ describe("extended underlines", () => {
 
   describe("fallback with support disabled", () => {
     beforeEach(() => {
-      setExtendedUnderlineSupport(false);
-      // Force chalk to output ANSI in test environment
+      // Force env to trigger detectExtendedUnderline() === false
+      process.env.TERM = "dumb";
+      delete process.env.TERM_PROGRAM;
+      delete process.env.KITTY_WINDOW_ID;
       chalk.level = 3;
-    });
-
-    afterEach(() => {
-      resetDetectionCache();
     });
 
     it("curlyUnderline falls back to regular underline", () => {
@@ -103,11 +108,7 @@ describe("extended underlines", () => {
 
   describe("edge cases", () => {
     beforeEach(() => {
-      setExtendedUnderlineSupport(true);
-    });
-
-    afterEach(() => {
-      resetDetectionCache();
+      process.env.TERM = "xterm-ghostty";
     });
 
     it("handles empty string", () => {
@@ -126,20 +127,30 @@ describe("extended underlines", () => {
     });
 
     it("handles special characters", () => {
-      const result = curlyUnderline("→ ★ © ®");
-      expect(stripAnsi(result)).toBe("→ ★ © ®");
+      const result = curlyUnderline("\u2192 \u2605 \u00a9 \u00ae");
+      expect(stripAnsi(result)).toBe("\u2192 \u2605 \u00a9 \u00ae");
     });
   });
 });
 
 describe("underline color", () => {
+  // Save original env values
+  const origTerm = process.env.TERM;
+  const origTermProgram = process.env.TERM_PROGRAM;
+  const origKitty = process.env.KITTY_WINDOW_ID;
+
+  afterEach(() => {
+    if (origTerm !== undefined) process.env.TERM = origTerm;
+    else delete process.env.TERM;
+    if (origTermProgram !== undefined) process.env.TERM_PROGRAM = origTermProgram;
+    else delete process.env.TERM_PROGRAM;
+    if (origKitty !== undefined) process.env.KITTY_WINDOW_ID = origKitty;
+    else delete process.env.KITTY_WINDOW_ID;
+  });
+
   describe("with support enabled", () => {
     beforeEach(() => {
-      setExtendedUnderlineSupport(true);
-    });
-
-    afterEach(() => {
-      resetDetectionCache();
+      process.env.TERM = "xterm-ghostty";
     });
 
     it("underlineColor applies SGR 58 with RGB", () => {
@@ -167,11 +178,9 @@ describe("underline color", () => {
 
   describe("fallback with support disabled", () => {
     beforeEach(() => {
-      setExtendedUnderlineSupport(false);
-    });
-
-    afterEach(() => {
-      resetDetectionCache();
+      process.env.TERM = "dumb";
+      delete process.env.TERM_PROGRAM;
+      delete process.env.KITTY_WINDOW_ID;
     });
 
     it("underlineColor falls back to regular underline", () => {

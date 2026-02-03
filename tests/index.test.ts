@@ -10,6 +10,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import chalk from "chalk";
 
 // Test that all exports are accessible from main index
 import {
@@ -21,9 +22,7 @@ import {
   stripAnsi,
   displayLength,
   // Detection
-  supportsExtendedUnderline,
-  setExtendedUnderlineSupport,
-  resetDetectionCache,
+  detectExtendedUnderline,
   // Underline functions
   underline,
   curlyUnderline,
@@ -36,21 +35,31 @@ import {
   hyperlink,
   // InkX compatibility
   bgOverride,
-  // Chalk re-export
-  chalk,
-  // Convenience object
-  chalkX,
+  // Term API
+  createTerm,
+  term,
 } from "../src/index.js";
 
 describe("@beorn/chalkx integration", () => {
+  // Save original env values
+  const origTerm = process.env.TERM;
+  const origTermProgram = process.env.TERM_PROGRAM;
+  const origKitty = process.env.KITTY_WINDOW_ID;
+
   beforeEach(() => {
-    setExtendedUnderlineSupport(true);
+    // Force env to trigger detectExtendedUnderline() === true
+    process.env.TERM = "xterm-ghostty";
     // Force chalk to output colors in test environment
     chalk.level = 3;
   });
 
   afterEach(() => {
-    resetDetectionCache();
+    if (origTerm !== undefined) process.env.TERM = origTerm;
+    else delete process.env.TERM;
+    if (origTermProgram !== undefined) process.env.TERM_PROGRAM = origTermProgram;
+    else delete process.env.TERM_PROGRAM;
+    if (origKitty !== undefined) process.env.KITTY_WINDOW_ID = origKitty;
+    else delete process.env.KITTY_WINDOW_ID;
   });
 
   describe("exports", () => {
@@ -66,25 +75,14 @@ describe("@beorn/chalkx integration", () => {
       expect(typeof bgOverride).toBe("function");
       expect(typeof stripAnsi).toBe("function");
       expect(typeof displayLength).toBe("function");
-      expect(typeof supportsExtendedUnderline).toBe("function");
-      expect(typeof setExtendedUnderlineSupport).toBe("function");
-      expect(typeof resetDetectionCache).toBe("function");
+      expect(typeof detectExtendedUnderline).toBe("function");
+      expect(typeof createTerm).toBe("function");
     });
 
-    it("exports chalk", () => {
-      expect(chalk).toBeDefined();
-      expect(typeof chalk.red).toBe("function");
-      expect(typeof chalk.bold).toBe("function");
-    });
-
-    it("exports chalkX convenience object", () => {
-      expect(chalkX).toBeDefined();
-      expect(typeof chalkX.curlyUnderline).toBe("function");
-      expect(typeof chalkX.hyperlink).toBe("function");
-      expect(typeof chalkX.bgOverride).toBe("function");
-      // Note: chalk methods on chalkX may not work due to proxy limitations
-      // Use chalk directly for color methods
-      expect(typeof chalkX.stripAnsi).toBe("function");
+    it("exports default term instance", () => {
+      expect(term).toBeDefined();
+      expect(typeof term.red).toBe("function");
+      expect(typeof term.bold).toBe("function");
     });
 
     it("exports ANSI_REGEX", () => {
@@ -92,15 +90,17 @@ describe("@beorn/chalkx integration", () => {
     });
   });
 
-  describe("chalk integration", () => {
-    it("chalk colors work correctly", () => {
-      const red = chalk.red("error");
+  describe("term styling", () => {
+    it("term styling works correctly", () => {
+      using t = createTerm({ color: "truecolor" });
+      const red = t.red("error");
       expect(red).toContain("\x1b[31m");
       expect(stripAnsi(red)).toBe("error");
     });
 
-    it("can combine chalk colors with extended underlines", () => {
-      const styled = chalk.red(curlyUnderline("error message"));
+    it("can combine term colors with extended underlines", () => {
+      using t = createTerm({ color: "truecolor" });
+      const styled = t.red(curlyUnderline("error message"));
       expect(styled).toContain("\x1b[31m"); // Red
       expect(styled).toContain("\x1b[4:3m"); // Curly
       expect(stripAnsi(styled)).toBe("error message");
@@ -109,8 +109,9 @@ describe("@beorn/chalkx integration", () => {
 
   describe("end-to-end styling", () => {
     it("creates a complete styled output", () => {
+      using t = createTerm({ color: "truecolor" });
       // Simulate IDE-style error display
-      const errorLine = `${chalk.red(curlyUnderline("typo"))} in ${hyperlink("file.ts:10", "vscode://file/path/to/file.ts:10")}`;
+      const errorLine = `${t.red(curlyUnderline("typo"))} in ${hyperlink("file.ts:10", "vscode://file/path/to/file.ts:10")}`;
 
       // Verify structure
       expect(errorLine).toContain("\x1b[31m"); // Red color
@@ -123,7 +124,8 @@ describe("@beorn/chalkx integration", () => {
     });
 
     it("displayLength works with complex styled text", () => {
-      const styled = `${chalk.bold(curlyUnderline("Hello"))} ${underlineColor(255, 0, 0, "World")}!`;
+      using t = createTerm({ color: "truecolor" });
+      const styled = `${t.bold(curlyUnderline("Hello"))} ${underlineColor(255, 0, 0, "World")}!`;
       expect(displayLength(styled)).toBe(12); // "Hello World!"
     });
   });
@@ -153,11 +155,6 @@ describe("@beorn/chalkx integration", () => {
       expect(result).toContain("\x1b[9999m");
       expect(result).toContain("\x1b[40m"); // bgBlack code
       expect(stripAnsi(result)).toBe("styled");
-    });
-
-    it("is available on chalkX", () => {
-      const result = chalkX.bgOverride("test");
-      expect(result).toBe("\x1b[9999mtest");
     });
   });
 });

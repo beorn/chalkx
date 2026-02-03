@@ -8,11 +8,13 @@
  */
 
 import {
-  chalk,
+  createTerm,
   curlyUnderline,
   styledUnderline,
   hyperlink,
 } from "../../src/index.js";
+
+using term = createTerm();
 
 // Sample text with "misspelled" words
 const text = `The quik brown fox jumps over the layz dog.
@@ -35,7 +37,7 @@ console.log("📝 Spelling Checker Demo\n");
 console.log("=".repeat(60));
 
 // Display original text with errors highlighted
-console.log("\n" + chalk.bold("Original text with errors highlighted:") + "\n");
+console.log("\n" + term.bold("Original text with errors highlighted:") + "\n");
 
 let highlightedText = text;
 for (const [wrong, _correct] of misspelledWords) {
@@ -48,15 +50,15 @@ for (const [wrong, _correct] of misspelledWords) {
 console.log(highlightedText);
 
 // Show corrections
-console.log("\n" + chalk.bold("Suggested corrections:") + "\n");
+console.log("\n" + term.bold("Suggested corrections:") + "\n");
 for (const [wrong, correct] of misspelledWords) {
   console.log(
-    `  ${styledUnderline("curly", [255, 100, 100], wrong)} → ${chalk.green(correct)}`,
+    `  ${styledUnderline("curly", [255, 100, 100], wrong)} → ${term.green(correct)}`,
   );
 }
 
 // Different error types with different underline styles
-console.log("\n" + chalk.bold("Error type indicators:") + "\n");
+console.log("\n" + term.bold("Error type indicators:") + "\n");
 
 const errorTypes = [
   {
@@ -90,7 +92,7 @@ for (const { style, color, label, example } of errorTypes) {
 }
 
 // Code example
-console.log("\n" + chalk.bold("Code with diagnostics:") + "\n");
+console.log("\n" + term.bold("Code with diagnostics:") + "\n");
 
 const codeLines = [
   `function ${styledUnderline("curly", [255, 200, 100], "getUserData")}(${styledUnderline("curly", [255, 100, 100], "usrId")}) {`,
@@ -103,26 +105,26 @@ for (const line of codeLines) {
   console.log(`  ${line}`);
 }
 
-console.log("\n" + chalk.dim("Legend:"));
+console.log("\n" + term.dim("Legend:"));
 console.log(
-  chalk.dim(`  ${styledUnderline("curly", [255, 100, 100], "red")} = error`),
+  term.dim(`  ${styledUnderline("curly", [255, 100, 100], "red")} = error`),
 );
 console.log(
-  chalk.dim(
+  term.dim(
     `  ${styledUnderline("curly", [255, 200, 100], "yellow")} = warning`,
   ),
 );
 console.log(
-  chalk.dim(
+  term.dim(
     `  ${styledUnderline("dashed", [100, 180, 255], "blue")} = suggestion`,
   ),
 );
 console.log(
-  chalk.dim(`  ${styledUnderline("dotted", [180, 180, 180], "gray")} = hint`),
+  term.dim(`  ${styledUnderline("dotted", [180, 180, 180], "gray")} = hint`),
 );
 
 // Hyperlinks for more info
-console.log("\n" + chalk.bold("Learn more:") + "\n");
+console.log("\n" + term.bold("Learn more:") + "\n");
 console.log(
   `  ${hyperlink("VS Code Diagnostics", "https://code.visualstudio.com/api/language-extensions/diagnostics")}`,
 );

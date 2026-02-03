@@ -5,7 +5,7 @@
  */
 
 import {
-  chalk,
+  createTerm,
   curlyUnderline,
   dottedUnderline,
   dashedUnderline,
@@ -13,8 +13,10 @@ import {
   underlineColor,
   styledUnderline,
   hyperlink,
-  supportsExtendedUnderline,
+  detectExtendedUnderline,
 } from "../../src/index.js";
+
+using term = createTerm();
 
 console.log("@beorn/chalkx Basic Example\n");
 console.log("=".repeat(50));
@@ -22,18 +24,18 @@ console.log("=".repeat(50));
 // Terminal detection
 console.log("\n📊 Terminal Detection:");
 console.log(
-  `Extended underline support: ${supportsExtendedUnderline() ? "✓ Yes" : "✗ No (will use fallbacks)"}`,
+  `Extended underline support: ${detectExtendedUnderline() ? "✓ Yes" : "✗ No (will use fallbacks)"}`,
 );
 
-// Standard chalk (re-exported)
-console.log("\n🎨 Standard Chalk (re-exported):");
-console.log(chalk.red("  Red text"));
-console.log(chalk.bold.blue("  Bold blue text"));
-console.log(chalk.bgYellow.black("  Black text on yellow background"));
+// Term styling
+console.log("\n🎨 Term Styling:");
+console.log(term.red("  Red text"));
+console.log(term.bold.blue("  Bold blue text"));
+console.log(term.bgYellow.black("  Black text on yellow background"));
 
 // Extended underline styles
 console.log("\n📝 Extended Underline Styles:");
-console.log(`  Standard:  ${chalk.underline("standard underline")}`);
+console.log(`  Standard:  ${term.underline("standard underline")}`);
 console.log(`  Curly:     ${curlyUnderline("curly/wavy underline")}`);
 console.log(`  Dotted:    ${dottedUnderline("dotted underline")}`);
 console.log(`  Dashed:    ${dashedUnderline("dashed underline")}`);
@@ -65,14 +67,14 @@ console.log("\n🔗 Hyperlinks (click in supporting terminals):");
 console.log(`  ${hyperlink("GitHub", "https://github.com")}`);
 console.log(`  ${hyperlink("Anthropic", "https://anthropic.com")}`);
 
-// Combining with chalk
-console.log("\n🎯 Combining with Chalk:");
-console.log(chalk.red(`  ${curlyUnderline("Error:")} Something went wrong`));
+// Combining with term styling
+console.log("\n🎯 Combining with Term Styling:");
+console.log(term.red(`  ${curlyUnderline("Error:")} Something went wrong`));
 console.log(
-  chalk.yellow(`  ${dashedUnderline("Warning:")} This is deprecated`),
+  term.yellow(`  ${dashedUnderline("Warning:")} This is deprecated`),
 );
 console.log(
-  chalk.blue(`  ${hyperlink("Click for docs", "https://example.com/docs")}`),
+  term.blue(`  ${hyperlink("Click for docs", "https://example.com/docs")}`),
 );
 
 console.log("\n" + "=".repeat(50));

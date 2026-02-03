@@ -10,8 +10,8 @@
  * regular underlines as fallback.
  */
 
-import chalk from "chalk";
 import {
+  createTerm,
   curlyUnderline,
   dottedUnderline,
   dashedUnderline,
@@ -19,32 +19,27 @@ import {
   underlineColor,
   styledUnderline,
   hyperlink,
-  supportsExtendedUnderline,
-  setExtendedUnderlineSupport,
+  detectExtendedUnderline,
   displayLength,
   stripAnsi,
 } from "./index.ts";
 
-// Force colors
-chalk.level = 3;
-
-// Force extended underline support for storybook display
-setExtendedUnderlineSupport(true);
+using term = createTerm({ color: "truecolor" });
 
 const divider = "═".repeat(60);
 const subDivider = "─".repeat(40);
 
 function section(title: string): void {
   console.log();
-  console.log(chalk.bold.cyan(divider));
-  console.log(chalk.bold.cyan(` ${title}`));
-  console.log(chalk.bold.cyan(divider));
+  console.log(term.bold.cyan(divider));
+  console.log(term.bold.cyan(` ${title}`));
+  console.log(term.bold.cyan(divider));
   console.log();
 }
 
 function subsection(title: string): void {
-  console.log(chalk.dim(subDivider));
-  console.log(chalk.bold(title));
+  console.log(term.dim(subDivider));
+  console.log(term.bold(title));
   console.log();
 }
 
@@ -57,13 +52,13 @@ section("Terminal Information");
 console.log(` TERM: ${process.env.TERM ?? "(not set)"}`);
 console.log(` TERM_PROGRAM: ${process.env.TERM_PROGRAM ?? "(not set)"}`);
 console.log(
-  ` Extended underline support: ${supportsExtendedUnderline() ? chalk.green("Yes") : chalk.red("No (fallback mode)")}`,
+  ` Extended underline support: ${detectExtendedUnderline() ? term.green("Yes") : term.red("No (fallback mode)")}`,
 );
 console.log();
 console.log(
-  chalk.dim(" Note: This storybook forces extended mode for display."),
+  term.dim(" Note: This storybook forces extended mode for display."),
 );
-console.log(chalk.dim(" Your terminal may show fallbacks if not supported."));
+console.log(term.dim(" Your terminal may show fallbacks if not supported."));
 
 // =============================================================================
 // Extended Underline Styles
@@ -73,7 +68,7 @@ section("Extended Underline Styles");
 
 subsection("Comparison with standard underline");
 
-console.log(` Standard:  ${chalk.underline("regular underline")}`);
+console.log(` Standard:  ${term.underline("regular underline")}`);
 console.log(` Double:    ${doubleUnderline("double underline")}`);
 console.log(` Curly:     ${curlyUnderline("curly/wavy underline")}`);
 console.log(` Dotted:    ${dottedUnderline("dotted underline")}`);
@@ -83,7 +78,7 @@ console.log();
 subsection("Side by side");
 
 console.log(
-  ` ${chalk.underline("standard")} | ${doubleUnderline("double")} | ${curlyUnderline("curly")} | ${dottedUnderline("dotted")} | ${dashedUnderline("dashed")}`,
+  ` ${term.underline("standard")} | ${doubleUnderline("double")} | ${curlyUnderline("curly")} | ${dottedUnderline("dotted")} | ${dashedUnderline("dashed")}`,
 );
 
 // =============================================================================
@@ -105,13 +100,13 @@ console.log();
 subsection("With text color (independent)");
 
 console.log(
-  ` ${chalk.red(underlineColor(0, 255, 0, "Red text, green underline"))}`,
+  ` ${term.red(underlineColor(0, 255, 0, "Red text, green underline"))}`,
 );
 console.log(
-  ` ${chalk.blue(underlineColor(255, 165, 0, "Blue text, orange underline"))}`,
+  ` ${term.blue(underlineColor(255, 165, 0, "Blue text, orange underline"))}`,
 );
 console.log(
-  ` ${chalk.white(underlineColor(255, 0, 0, "White text, red underline"))}`,
+  ` ${term.white(underlineColor(255, 0, 0, "White text, red underline"))}`,
 );
 
 // =============================================================================
@@ -172,16 +167,16 @@ console.log();
 subsection("Styled hyperlinks");
 
 console.log(
-  ` Underlined: ${chalk.underline(hyperlink("Underlined link", "https://example.com"))}`,
+  ` Underlined: ${term.underline(hyperlink("Underlined link", "https://example.com"))}`,
 );
 console.log(
-  ` Colored:    ${chalk.blue(hyperlink("Blue link", "https://example.com"))}`,
+  ` Colored:    ${term.blue(hyperlink("Blue link", "https://example.com"))}`,
 );
 console.log(
-  ` Bold:       ${chalk.bold(hyperlink("Bold link", "https://example.com"))}`,
+  ` Bold:       ${term.bold(hyperlink("Bold link", "https://example.com"))}`,
 );
 console.log(
-  ` Combined:   ${chalk.bold.blue.underline(hyperlink("Styled link", "https://example.com"))}`,
+  ` Combined:   ${term.bold.blue.underline(hyperlink("Styled link", "https://example.com"))}`,
 );
 
 // =============================================================================
@@ -192,14 +187,14 @@ section("ANSI Utilities");
 
 subsection("stripAnsi() - Remove escape codes");
 
-const styled = curlyUnderline("Hello ") + chalk.bold.red("World");
+const styled = curlyUnderline("Hello ") + term.bold.red("World");
 console.log(` Styled:   "${styled}"`);
 console.log(` Stripped: "${stripAnsi(styled)}"`);
 console.log();
 
 subsection("displayLength() - Visual character count");
 
-const coloredText = chalk.red("Red") + " and " + chalk.blue("Blue");
+const coloredText = term.red("Red") + " and " + term.blue("Blue");
 console.log(` Text:         "${coloredText}"`);
 console.log(` string.length: ${coloredText.length}`);
 console.log(` displayLength: ${displayLength(coloredText)}`);
@@ -216,26 +211,26 @@ console.log(
   ` const ${styledUnderline("curly", [255, 0, 0], "x")} = undefined;`,
 );
 console.log(
-  `       ${chalk.red("^")} ${chalk.dim("Variable 'x' is declared but never used")}`,
+  `       ${term.red("^")} ${term.dim("Variable 'x' is declared but never used")}`,
 );
 console.log();
 
 subsection("Task manager styling");
 
 console.log(
-  ` ${chalk.green("✓")} ${chalk.dim.strikethrough("Completed task")}`,
+  ` ${term.green("✓")} ${term.dim.strikethrough("Completed task")}`,
 );
 console.log(
-  ` ${chalk.yellow("◐")} ${styledUnderline("curly", [255, 180, 0], "Due today: Submit report")}`,
+  ` ${term.yellow("◐")} ${styledUnderline("curly", [255, 180, 0], "Due today: Submit report")}`,
 );
 console.log(
-  ` ${chalk.red("○")} ${styledUnderline("curly", [255, 80, 80], "Overdue: Fix critical bug")}`,
+  ` ${term.red("○")} ${styledUnderline("curly", [255, 80, 80], "Overdue: Fix critical bug")}`,
 );
 console.log(
-  ` ${chalk.blue("○")} ${dottedUnderline("Embedded from [[Projects]]")}`,
+  ` ${term.blue("○")} ${dottedUnderline("Embedded from [[Projects]]")}`,
 );
 console.log(
-  ` ${chalk.gray("○")} ${dashedUnderline("Draft: New feature idea")}`,
+  ` ${term.gray("○")} ${dashedUnderline("Draft: New feature idea")}`,
 );
 console.log();
 
@@ -262,5 +257,5 @@ console.log("   • OSC 8 hyperlinks");
 console.log("   • ANSI utilities (stripAnsi, displayLength)");
 console.log("   • Graceful fallback for unsupported terminals");
 console.log();
-console.log(chalk.dim(" All features degrade gracefully in basic terminals."));
+console.log(term.dim(" All features degrade gracefully in basic terminals."));
 console.log();

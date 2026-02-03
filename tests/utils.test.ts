@@ -4,14 +4,24 @@
 
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { ANSI_REGEX, stripAnsi, displayLength } from "../src/utils.js";
-import {
-  setExtendedUnderlineSupport,
-  resetDetectionCache,
-} from "../src/detection.js";
 import { curlyUnderline, underlineColor } from "../src/underline.js";
 import { hyperlink } from "../src/hyperlink.js";
 
 describe("ANSI utilities", () => {
+  // Save original env values
+  const origTerm = process.env.TERM;
+  const origTermProgram = process.env.TERM_PROGRAM;
+  const origKitty = process.env.KITTY_WINDOW_ID;
+
+  afterEach(() => {
+    if (origTerm !== undefined) process.env.TERM = origTerm;
+    else delete process.env.TERM;
+    if (origTermProgram !== undefined) process.env.TERM_PROGRAM = origTermProgram;
+    else delete process.env.TERM_PROGRAM;
+    if (origKitty !== undefined) process.env.KITTY_WINDOW_ID = origKitty;
+    else delete process.env.KITTY_WINDOW_ID;
+  });
+
   describe("ANSI_REGEX", () => {
     it("matches standard SGR codes", () => {
       expect("\x1b[31m".match(ANSI_REGEX)).toBeTruthy();
@@ -34,11 +44,8 @@ describe("ANSI utilities", () => {
 
   describe("stripAnsi", () => {
     beforeEach(() => {
-      setExtendedUnderlineSupport(true);
-    });
-
-    afterEach(() => {
-      resetDetectionCache();
+      // Enable extended underline detection via env
+      process.env.TERM = "xterm-ghostty";
     });
 
     it("strips standard ANSI codes", () => {
@@ -81,11 +88,8 @@ describe("ANSI utilities", () => {
 
   describe("displayLength", () => {
     beforeEach(() => {
-      setExtendedUnderlineSupport(true);
-    });
-
-    afterEach(() => {
-      resetDetectionCache();
+      // Enable extended underline detection via env
+      process.env.TERM = "xterm-ghostty";
     });
 
     it("calculates length excluding ANSI codes", () => {
@@ -131,11 +135,11 @@ describe("ANSI utilities", () => {
 
     it("handles CJK and emoji with correct display width", () => {
       // CJK characters are 2 cells wide each
-      expect(displayLength("こんにちは")).toBe(10); // 5 chars × 2 cells
-      expect(displayLength("한글")).toBe(4); // 2 chars × 2 cells
+      expect(displayLength("\u3053\u3093\u306b\u3061\u306f")).toBe(10); // 5 chars x 2 cells
+      expect(displayLength("\ud55c\uae00")).toBe(4); // 2 chars x 2 cells
       // Emoji are 2 cells wide
-      expect(displayLength("🎉🎊🎈")).toBe(6); // 3 emoji × 2 cells
-      expect(displayLength("👋")).toBe(2);
+      expect(displayLength("\ud83c\udf89\ud83c\udf8a\ud83c\udf88")).toBe(6); // 3 emoji x 2 cells
+      expect(displayLength("\ud83d\udc4b")).toBe(2);
     });
   });
 });

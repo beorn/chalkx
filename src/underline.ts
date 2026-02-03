@@ -13,7 +13,7 @@ import {
   UNDERLINE_RESET_STANDARD,
   buildUnderlineColorCode,
 } from "./constants.js";
-import { supportsExtendedUnderline } from "./detection.js";
+import { detectExtendedUnderline } from "./detection.js";
 import type { UnderlineStyle, RGB } from "./types.js";
 
 // =============================================================================
@@ -32,7 +32,7 @@ export function underline(
   text: string,
   style: UnderlineStyle = "single",
 ): string {
-  if (!supportsExtendedUnderline() || style === "single") {
+  if (!detectExtendedUnderline() || style === "single") {
     return chalk.underline(text);
   }
 
@@ -123,7 +123,7 @@ export function underlineColor(
   b: number,
   text: string,
 ): string {
-  if (!supportsExtendedUnderline()) {
+  if (!detectExtendedUnderline()) {
     // Fallback: just apply regular underline, ignore color
     return chalk.underline(text);
   }
@@ -156,7 +156,7 @@ export function styledUnderline(
   rgb: RGB,
   text: string,
 ): string {
-  if (!supportsExtendedUnderline()) {
+  if (!detectExtendedUnderline()) {
     return chalk.underline(text);
   }
 
