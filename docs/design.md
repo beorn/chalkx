@@ -35,7 +35,7 @@ Reasons:
 For users who only need ANSI stripping without chalk, we provide:
 
 ```ts
-import { stripAnsi, displayLength, ANSI_REGEX } from "@beorn/chalkx/utils";
+import { stripAnsi, displayLength, ANSI_REGEX } from "@beorn/chalkx/utils"
 ```
 
 This export has zero dependencies.
@@ -160,7 +160,7 @@ Where:
 Named exports for all functions:
 
 ```ts
-import { curlyUnderline, hyperlink } from "@beorn/chalkx";
+import { curlyUnderline, hyperlink } from "@beorn/chalkx"
 ```
 
 ### 2. Convenience Object
@@ -168,9 +168,9 @@ import { curlyUnderline, hyperlink } from "@beorn/chalkx";
 For users who prefer object-style:
 
 ```ts
-import { chalkX } from "@beorn/chalkx";
-chalkX.curlyUnderline("text");
-chalkX.red("text"); // chalk methods available too
+import { chalkX } from "@beorn/chalkx"
+chalkX.curlyUnderline("text")
+chalkX.red("text") // chalk methods available too
 ```
 
 ### 3. Chalk Re-export
@@ -178,7 +178,7 @@ chalkX.red("text"); // chalk methods available too
 Single import for everything:
 
 ```ts
-import { chalk, curlyUnderline } from "@beorn/chalkx";
+import { chalk, curlyUnderline } from "@beorn/chalkx"
 ```
 
 ### 4. Type Safety
@@ -186,8 +186,8 @@ import { chalk, curlyUnderline } from "@beorn/chalkx";
 Full TypeScript types:
 
 ```ts
-type UnderlineStyle = "single" | "double" | "curly" | "dotted" | "dashed";
-type RGB = [r: number, g: number, b: number];
+type UnderlineStyle = "single" | "double" | "curly" | "dotted" | "dashed"
+type RGB = [r: number, g: number, b: number]
 ```
 
 ## Future Considerations

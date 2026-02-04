@@ -5,16 +5,16 @@
  * with graceful fallback to standard underline on unsupported terminals.
  */
 
-import chalk from "chalk";
+import chalk from "chalk"
 import {
   UNDERLINE_CODES,
   UNDERLINE_COLOR_RESET,
   UNDERLINE_STANDARD,
   UNDERLINE_RESET_STANDARD,
   buildUnderlineColorCode,
-} from "./constants.js";
-import { detectExtendedUnderline } from "./detection.js";
-import type { UnderlineStyle, RGB } from "./types.js";
+} from "./constants.js"
+import { detectExtendedUnderline } from "./detection.js"
+import type { UnderlineStyle, RGB } from "./types.js"
 
 // =============================================================================
 // Extended Underline Functions
@@ -33,10 +33,10 @@ export function underline(
   style: UnderlineStyle = "single",
 ): string {
   if (!detectExtendedUnderline() || style === "single") {
-    return chalk.underline(text);
+    return chalk.underline(text)
   }
 
-  return `${UNDERLINE_CODES[style]}${text}${UNDERLINE_CODES.reset}`;
+  return `${UNDERLINE_CODES[style]}${text}${UNDERLINE_CODES.reset}`
 }
 
 /**
@@ -56,7 +56,7 @@ export function underline(
  * ```
  */
 export function curlyUnderline(text: string): string {
-  return underline(text, "curly");
+  return underline(text, "curly")
 }
 
 /**
@@ -67,7 +67,7 @@ export function curlyUnderline(text: string): string {
  * @returns Styled text with dotted underline
  */
 export function dottedUnderline(text: string): string {
-  return underline(text, "dotted");
+  return underline(text, "dotted")
 }
 
 /**
@@ -78,7 +78,7 @@ export function dottedUnderline(text: string): string {
  * @returns Styled text with dashed underline
  */
 export function dashedUnderline(text: string): string {
-  return underline(text, "dashed");
+  return underline(text, "dashed")
 }
 
 /**
@@ -89,7 +89,7 @@ export function dashedUnderline(text: string): string {
  * @returns Styled text with double underline
  */
 export function doubleUnderline(text: string): string {
-  return underline(text, "double");
+  return underline(text, "double")
 }
 
 // =============================================================================
@@ -125,11 +125,11 @@ export function underlineColor(
 ): string {
   if (!detectExtendedUnderline()) {
     // Fallback: just apply regular underline, ignore color
-    return chalk.underline(text);
+    return chalk.underline(text)
   }
 
-  const colorCode = buildUnderlineColorCode(r, g, b);
-  return `${UNDERLINE_STANDARD}${colorCode}${text}${UNDERLINE_COLOR_RESET}${UNDERLINE_RESET_STANDARD}`;
+  const colorCode = buildUnderlineColorCode(r, g, b)
+  return `${UNDERLINE_STANDARD}${colorCode}${text}${UNDERLINE_COLOR_RESET}${UNDERLINE_RESET_STANDARD}`
 }
 
 /**
@@ -157,12 +157,12 @@ export function styledUnderline(
   text: string,
 ): string {
   if (!detectExtendedUnderline()) {
-    return chalk.underline(text);
+    return chalk.underline(text)
   }
 
-  const [r, g, b] = rgb;
-  const styleCode = UNDERLINE_CODES[style];
-  const colorCode = buildUnderlineColorCode(r, g, b);
+  const [r, g, b] = rgb
+  const styleCode = UNDERLINE_CODES[style]
+  const colorCode = buildUnderlineColorCode(r, g, b)
 
-  return `${styleCode}${colorCode}${text}${UNDERLINE_CODES.reset}${UNDERLINE_COLOR_RESET}`;
+  return `${styleCode}${colorCode}${text}${UNDERLINE_CODES.reset}${UNDERLINE_COLOR_RESET}`
 }

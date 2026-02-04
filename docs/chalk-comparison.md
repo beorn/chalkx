@@ -96,19 +96,19 @@ chalkx is a drop-in extension of chalk:
 
 ```ts
 // Before
-import chalk from "chalk";
-console.log(chalk.red("error"));
+import chalk from "chalk"
+console.log(chalk.red("error"))
 
 // After (option 1: add features, keep chalk imports)
-import chalk from "chalk";
-import { curlyUnderline } from "@beorn/chalkx";
-console.log(chalk.red("error"));
-console.log(curlyUnderline("misspelled"));
+import chalk from "chalk"
+import { curlyUnderline } from "@beorn/chalkx"
+console.log(chalk.red("error"))
+console.log(curlyUnderline("misspelled"))
 
 // After (option 2: single import)
-import { chalk, curlyUnderline } from "@beorn/chalkx";
-console.log(chalk.red("error"));
-console.log(curlyUnderline("misspelled"));
+import { chalk, curlyUnderline } from "@beorn/chalkx"
+console.log(chalk.red("error"))
+console.log(curlyUnderline("misspelled"))
 ```
 
 No breaking changes. Add chalkx alongside chalk and use extended features as needed.

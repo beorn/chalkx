@@ -144,4 +144,3 @@ export const BG_OVERRIDE_CODE = 9999
 export function bgOverride(text: string): string {
   return `\x1b[${BG_OVERRIDE_CODE}m${text}`
 }
-

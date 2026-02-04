@@ -11,7 +11,12 @@
 
 import chalk, { Chalk, type ChalkInstance } from "chalk"
 import type { ColorLevel, CreateTermOptions } from "./types.js"
-import { detectColor, detectCursor, detectInput, detectUnicode } from "./detection.js"
+import {
+  detectColor,
+  detectCursor,
+  detectInput,
+  detectUnicode,
+} from "./detection.js"
 
 // =============================================================================
 // ANSI Utilities
@@ -259,11 +264,19 @@ export function createTerm(options: CreateTermOptions = {}): Term {
   // Cache detection results
   const cachedCursor = options.cursor ?? detectCursor(stdout)
   const cachedInput = detectInput(stdin)
-  const cachedColor = options.color !== undefined ? options.color : detectColor(stdout)
+  const cachedColor =
+    options.color !== undefined ? options.color : detectColor(stdout)
   const cachedUnicode = options.unicode ?? detectUnicode()
 
   // Create chalk instance with appropriate color level
-  const chalkLevel = cachedColor === null ? 0 : cachedColor === "basic" ? 1 : cachedColor === "256" ? 2 : 3
+  const chalkLevel =
+    cachedColor === null
+      ? 0
+      : cachedColor === "basic"
+        ? 1
+        : cachedColor === "256"
+          ? 2
+          : 3
   const chalkInstance = new Chalk({ level: chalkLevel })
 
   // Disposed flag
@@ -326,7 +339,10 @@ export function createTerm(options: CreateTermOptions = {}): Term {
  * - Callable: term('text') applies current styles
  * - Chainable: term.bold.red('text') chains styles
  */
-function createStyleProxy(chalkInstance: ChalkInstance, termBase: object): Term {
+function createStyleProxy(
+  chalkInstance: ChalkInstance,
+  termBase: object,
+): Term {
   return createChainProxy(chalkInstance, termBase)
 }
 

@@ -142,7 +142,11 @@ export function detectColor(stdout: NodeJS.WriteStream): ColorLevel | null {
   }
 
   // xterm-color variants get basic colors
-  if (term.includes("xterm") || term.includes("color") || term.includes("ansi")) {
+  if (
+    term.includes("xterm") ||
+    term.includes("color") ||
+    term.includes("ansi")
+  ) {
     return "basic"
   }
 
@@ -177,8 +181,12 @@ export function detectUnicode(): boolean {
   }
 
   // Check locale for UTF-8
-  const lang = process.env.LANG ?? process.env.LC_ALL ?? process.env.LC_CTYPE ?? ""
-  if (lang.toLowerCase().includes("utf-8") || lang.toLowerCase().includes("utf8")) {
+  const lang =
+    process.env.LANG ?? process.env.LC_ALL ?? process.env.LC_CTYPE ?? ""
+  if (
+    lang.toLowerCase().includes("utf-8") ||
+    lang.toLowerCase().includes("utf8")
+  ) {
     return true
   }
 
@@ -189,7 +197,9 @@ export function detectUnicode(): boolean {
 
   // Modern terminal programs
   const termProgram = process.env.TERM_PROGRAM ?? ""
-  if (["iTerm.app", "Ghostty", "WezTerm", "Apple_Terminal"].includes(termProgram)) {
+  if (
+    ["iTerm.app", "Ghostty", "WezTerm", "Apple_Terminal"].includes(termProgram)
+  ) {
     return true
   }
 
@@ -220,7 +230,12 @@ export function detectUnicode(): boolean {
 /**
  * Known terminals with extended underline support.
  */
-const EXTENDED_UNDERLINE_TERMS = ["xterm-ghostty", "xterm-kitty", "wezterm", "xterm-256color"]
+const EXTENDED_UNDERLINE_TERMS = [
+  "xterm-ghostty",
+  "xterm-kitty",
+  "wezterm",
+  "xterm-256color",
+]
 
 /**
  * Known terminal programs with extended underline support.
@@ -257,4 +272,3 @@ export function detectExtendedUnderline(): boolean {
   // Default to false for unknown terminals
   return false
 }
-

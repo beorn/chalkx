@@ -10,45 +10,45 @@ Terminal primitives with Disposable pattern support, plus extended ANSI features
 The primary API is the `Term` instance with Disposable support:
 
 ```typescript
-import { createTerm } from "@beorn/chalkx";
+import { createTerm } from "@beorn/chalkx"
 
 // Create term (Disposable pattern)
-using term = createTerm();
+using term = createTerm()
 
 // Flattened styling - term IS the style chain
-term.red("error");
-term.bold.green("success");
-term.rgb(255, 100, 0).bold("orange bold");
+term.red("error")
+term.bold.green("success")
+term.rgb(255, 100, 0).bold("orange bold")
 
 // Terminal capability detection
-term.hasColor();    // 'basic' | '256' | 'truecolor' | null
-term.hasCursor();   // boolean - can reposition cursor?
-term.hasInput();    // boolean - can read raw keystrokes?
-term.hasUnicode();  // boolean - can render unicode?
+term.hasColor() // 'basic' | '256' | 'truecolor' | null
+term.hasCursor() // boolean - can reposition cursor?
+term.hasInput() // boolean - can read raw keystrokes?
+term.hasUnicode() // boolean - can render unicode?
 
 // Dimensions
-console.log(`${term.cols}x${term.rows}`);
+console.log(`${term.cols}x${term.rows}`)
 ```
 
 ### Console Capture
 
 ```typescript
-import { createTerm, patchConsole } from "@beorn/chalkx";
+import { createTerm, patchConsole } from "@beorn/chalkx"
 
-using term = createTerm();
-using patched = patchConsole(console);
+using term = createTerm()
+using patched = patchConsole(console)
 
 // All console calls are captured
-console.log("hello");
-console.error("oops");
+console.log("hello")
+console.error("oops")
 
 // Read captured entries
-patched.getSnapshot();  // ConsoleEntry[]
+patched.getSnapshot() // ConsoleEntry[]
 
 // Subscribe to changes (useSyncExternalStore compatible)
 const unsubscribe = patched.subscribe(() => {
-  const entries = patched.getSnapshot();
-});
+  const entries = patched.getSnapshot()
+})
 ```
 
 ### Using with inkx
@@ -70,20 +70,20 @@ For CLI tools, scripts, or non-inkx projects, import directly from chalkx as sho
 For quick scripts that don't need Disposable cleanup, use the pre-created default `term`:
 
 ```typescript
-import { term } from "@beorn/chalkx";
+import { term } from "@beorn/chalkx"
 
-console.log(term.green("success"));
-console.log(`Terminal size: ${term.cols}x${term.rows}`);
+console.log(term.green("success"))
+console.log(`Terminal size: ${term.cols}x${term.rows}`)
 ```
 
 ### Testing with Capability Overrides
 
 ```typescript
 // Force specific capabilities for testing
-using term = createTerm({ color: null });        // No colors
-using term = createTerm({ color: 'truecolor' }); // Force truecolor
-using term = createTerm({ unicode: false });     // Force ASCII
-using term = createTerm({ cursor: false });      // No cursor control
+using term = createTerm({ color: null }) // No colors
+using term = createTerm({ color: "truecolor" }) // Force truecolor
+using term = createTerm({ unicode: false }) // Force ASCII
+using term = createTerm({ cursor: false }) // No cursor control
 ```
 
 ## Extended ANSI Features
@@ -91,16 +91,16 @@ using term = createTerm({ cursor: false });      // No cursor control
 Beyond the Term API, chalkx provides extended ANSI features:
 
 ```typescript
-import { curlyUnderline, hyperlink, chalk } from "@beorn/chalkx";
+import { curlyUnderline, hyperlink, chalk } from "@beorn/chalkx"
 
 // Spell-check style wavy underline
-console.log(curlyUnderline("mispelled"));
+console.log(curlyUnderline("mispelled"))
 
 // Clickable terminal link
-console.log(hyperlink("Open docs", "https://example.com/docs"));
+console.log(hyperlink("Open docs", "https://example.com/docs"))
 
 // Combine with chalk colors
-console.log(chalk.red(curlyUnderline("Error: typo detected")));
+console.log(chalk.red(curlyUnderline("Error: typo detected")))
 ```
 
 ## Features
@@ -142,26 +142,26 @@ import {
   styledUnderline,
   hyperlink,
   chalk,
-} from "@beorn/chalkx";
+} from "@beorn/chalkx"
 
 // Extended underline styles
-console.log(curlyUnderline("spelling error")); // wavy underline
-console.log(dottedUnderline("embedded content")); // dotted underline
-console.log(dashedUnderline("draft text")); // dashed underline
-console.log(doubleUnderline("important")); // double underline
+console.log(curlyUnderline("spelling error")) // wavy underline
+console.log(dottedUnderline("embedded content")) // dotted underline
+console.log(dashedUnderline("draft text")) // dashed underline
+console.log(doubleUnderline("important")) // double underline
 
 // Independent underline color
-console.log(underlineColor(255, 0, 0, "error")); // red underline
-console.log(underlineColor(255, 165, 0, "warn")); // orange underline
+console.log(underlineColor(255, 0, 0, "error")) // red underline
+console.log(underlineColor(255, 165, 0, "warn")) // orange underline
 
 // Style + color combined
-console.log(styledUnderline("curly", [255, 0, 0], "critical error"));
+console.log(styledUnderline("curly", [255, 0, 0], "critical error"))
 
 // Hyperlinks (clickable in terminal)
-console.log(hyperlink("Click me", "https://example.com"));
+console.log(hyperlink("Click me", "https://example.com"))
 
 // Works with chalk for text color
-console.log(chalk.red(curlyUnderline("red text, wavy underline")));
+console.log(chalk.red(curlyUnderline("red text, wavy underline")))
 ```
 
 ## InkX Background Override
@@ -475,11 +475,11 @@ chalkx implements a tiered fallback approach:
 Detection happens once at startup and caches the result. Override with:
 
 ```typescript
-import { setExtendedUnderlineSupport } from "@beorn/chalkx";
+import { setExtendedUnderlineSupport } from "@beorn/chalkx"
 
-setExtendedUnderlineSupport(true); // Force extended mode
-setExtendedUnderlineSupport(false); // Force fallback mode
-setExtendedUnderlineSupport(null); // Re-detect
+setExtendedUnderlineSupport(true) // Force extended mode
+setExtendedUnderlineSupport(false) // Force fallback mode
+setExtendedUnderlineSupport(null) // Re-detect
 ```
 
 > **Deprecated:** `setExtendedUnderlineSupport()` and `supportsExtendedUnderline()` are deprecated. Use `detectExtendedUnderline()` or pass capability overrides to `createTerm()`.
@@ -506,7 +506,7 @@ setExtendedUnderlineSupport(null); // Re-detect
 // WRONG - loses color level synchronization
 import chalk from "chalk"
 using term = createTerm({ color: null })
-chalk.red("still colored!")  // chalk ignores term's color setting
+chalk.red("still colored!") // chalk ignores term's color setting
 
 // RIGHT - use term's styling
 term.red("properly no-color")

@@ -11,16 +11,22 @@ Core terminal abstraction with Disposable pattern support plus extended ANSI fea
 
 ```ts
 // Term API (main)
-import { createTerm, patchConsole } from 'chalkx'
+import { createTerm, patchConsole } from "chalkx"
 
 // Types
-import type { Term, StyleChain, PatchedConsole, ColorLevel, ConsoleEntry } from 'chalkx'
+import type {
+  Term,
+  StyleChain,
+  PatchedConsole,
+  ColorLevel,
+  ConsoleEntry,
+} from "chalkx"
 
 // Detection (usually accessed via term instance)
-import { detectColor, detectCursor, detectInput, detectUnicode } from 'chalkx'
+import { detectColor, detectCursor, detectInput, detectUnicode } from "chalkx"
 
 // Utilities
-import { stripAnsi, displayLength, hyperlink, curlyUnderline } from 'chalkx'
+import { stripAnsi, displayLength, hyperlink, curlyUnderline } from "chalkx"
 ```
 
 ## Common Patterns
@@ -28,54 +34,54 @@ import { stripAnsi, displayLength, hyperlink, curlyUnderline } from 'chalkx'
 ### Basic Usage
 
 ```ts
-import { createTerm } from 'chalkx'
+import { createTerm } from "chalkx"
 
 // Create term (Disposable)
 using term = createTerm()
 
 // Detection
-term.hasCursor()    // boolean - can reposition cursor?
-term.hasInput()     // boolean - can read raw keystrokes?
-term.hasColor()     // 'basic' | '256' | 'truecolor' | null
-term.hasUnicode()   // boolean - can render unicode?
+term.hasCursor() // boolean - can reposition cursor?
+term.hasInput() // boolean - can read raw keystrokes?
+term.hasColor() // 'basic' | '256' | 'truecolor' | null
+term.hasUnicode() // boolean - can render unicode?
 
 // Dimensions
-term.cols           // number | undefined
-term.rows           // number | undefined
+term.cols // number | undefined
+term.rows // number | undefined
 
 // Output
-term.write('hello')
-term.writeLine('world')
+term.write("hello")
+term.writeLine("world")
 ```
 
 ### Flattened Styling
 
 ```ts
 // term IS the style chain - no .chalk prefix
-term.red('error')
-term.bold.green('success')
-term.rgb(255, 100, 0).bold('orange bold')
-term.bgBlue.white('inverted')
+term.red("error")
+term.bold.green("success")
+term.rgb(255, 100, 0).bold("orange bold")
+term.bgBlue.white("inverted")
 
 // Combine with write
-term.write(term.red.bold('Error: '))
-term.writeLine(term.dim('details here'))
+term.write(term.red.bold("Error: "))
+term.writeLine(term.dim("details here"))
 ```
 
 ### Console Patching
 
 ```ts
-import { patchConsole } from 'chalkx'
+import { patchConsole } from "chalkx"
 
 // Patch console - Disposable
 using patched = patchConsole(console)
 
 // All console calls are captured
-console.log('hello')
-console.error('oops')
+console.log("hello")
+console.error("oops")
 
 // Read captured entries
-patched.getSnapshot()  // ConsoleEntry[]
+patched.getSnapshot() // ConsoleEntry[]
 
 // Subscribe to changes (useSyncExternalStore compatible)
 const unsubscribe = patched.subscribe(() => {
@@ -88,10 +94,10 @@ const unsubscribe = patched.subscribe(() => {
 
 ```ts
 // Force specific capabilities for testing
-using term = createTerm({ color: null })        // No colors
-using term = createTerm({ color: 'truecolor' }) // Force truecolor
-using term = createTerm({ unicode: false })     // Force ASCII
-using term = createTerm({ cursor: false })      // No cursor control
+using term = createTerm({ color: null }) // No colors
+using term = createTerm({ color: "truecolor" }) // Force truecolor
+using term = createTerm({ unicode: false }) // Force ASCII
+using term = createTerm({ cursor: false }) // No cursor control
 
 // Custom streams
 using term = createTerm({ stdout: mockStream, stdin: mockStdin })
@@ -100,16 +106,16 @@ using term = createTerm({ stdout: mockStream, stdin: mockStdin })
 ### Extended Underlines
 
 ```ts
-import { curlyUnderline, dottedUnderline, hyperlink } from 'chalkx'
+import { curlyUnderline, dottedUnderline, hyperlink } from "chalkx"
 
 // Wavy underline (spell-check style)
-curlyUnderline('misspelled')
+curlyUnderline("misspelled")
 
 // Hyperlinks
-hyperlink('Click here', 'https://example.com')
+hyperlink("Click here", "https://example.com")
 
 // Combined with term styling
-term.red(curlyUnderline('error'))
+term.red(curlyUnderline("error"))
 ```
 
 ## Anti-Patterns
@@ -118,26 +124,26 @@ term.red(curlyUnderline('error'))
 
 ```ts
 // WRONG - loses color level synchronization
-import chalk from 'chalk'
-import { createTerm } from 'chalkx'
+import chalk from "chalk"
+import { createTerm } from "chalkx"
 
 using term = createTerm({ color: null })
-chalk.red('still colored!')  // chalk doesn't know about term's color setting
+chalk.red("still colored!") // chalk doesn't know about term's color setting
 
 // RIGHT - use term's styling
-term.red('properly no-color')
+term.red("properly no-color")
 ```
 
 ### Wrong: Using .style() (removed API)
 
 ```ts
 // WRONG - .style() method was removed
-term.style().red('error')
-term.style().bold.green('success')
+term.style().red("error")
+term.style().bold.green("success")
 
 // RIGHT - term IS the style chain directly
-term.red('error')
-term.bold.green('success')
+term.red("error")
+term.bold.green("success")
 ```
 
 ### Wrong: Forgetting Disposable cleanup
@@ -164,19 +170,19 @@ try {
 
 ## Key Types
 
-| Type | Description |
-|------|-------------|
-| `Term` | Main terminal interface with detection, styling, I/O |
-| `StyleChain` | Chainable styling methods (bold, red, rgb, etc) |
-| `PatchedConsole` | Console interceptor with getSnapshot/subscribe |
-| `ColorLevel` | `'basic' \| '256' \| 'truecolor'` |
-| `ConsoleEntry` | `{ method, args, stream }` |
+| Type             | Description                                          |
+| ---------------- | ---------------------------------------------------- |
+| `Term`           | Main terminal interface with detection, styling, I/O |
+| `StyleChain`     | Chainable styling methods (bold, red, rgb, etc)      |
+| `PatchedConsole` | Console interceptor with getSnapshot/subscribe       |
+| `ColorLevel`     | `'basic' \| '256' \| 'truecolor'`                    |
+| `ConsoleEntry`   | `{ method, args, stream }`                           |
 
 ## Detection Details
 
-| Method | What it checks |
-|--------|----------------|
-| `hasCursor()` | `stdout.isTTY && TERM !== 'dumb'` |
-| `hasInput()` | `stdin.isTTY && setRawMode available` |
-| `hasColor()` | NO_COLOR, FORCE_COLOR, COLORTERM, TERM |
-| `hasUnicode()` | LANG, TERM_PROGRAM, KITTY_WINDOW_ID |
+| Method         | What it checks                         |
+| -------------- | -------------------------------------- |
+| `hasCursor()`  | `stdout.isTTY && TERM !== 'dumb'`      |
+| `hasInput()`   | `stdin.isTTY && setRawMode available`  |
+| `hasColor()`   | NO_COLOR, FORCE_COLOR, COLORTERM, TERM |
+| `hasUnicode()` | LANG, TERM_PROGRAM, KITTY_WINDOW_ID    |
