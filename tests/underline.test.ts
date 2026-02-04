@@ -2,7 +2,7 @@
  * Tests for extended underline functions
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import chalk from "chalk";
 import {
   underline,

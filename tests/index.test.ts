@@ -9,7 +9,7 @@
  * - utils.test.ts
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import chalk from "chalk";
 
 // Test that all exports are accessible from main index

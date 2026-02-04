@@ -2,7 +2,7 @@
  * Tests for ANSI string utilities
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { ANSI_REGEX, stripAnsi, displayLength } from "../src/utils.js";
 import { curlyUnderline, underlineColor } from "../src/underline.js";
 import { hyperlink } from "../src/hyperlink.js";

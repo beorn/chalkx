@@ -2,7 +2,7 @@
  * Tests for OSC 8 hyperlink functions
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { hyperlink } from "../src/hyperlink.js";
 
 describe("hyperlink", () => {

@@ -2,7 +2,7 @@
  * Tests for terminal capability detection
  */
 
-import { describe, it, expect, afterEach } from "bun:test";
+import { describe, it, expect, afterEach } from "vitest";
 import { detectExtendedUnderline } from "../src/detection.js";
 
 describe("terminal detection", () => {
