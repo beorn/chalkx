@@ -16,9 +16,9 @@ describe("ANSI utilities", () => {
   afterEach(() => {
     if (origTerm !== undefined) process.env.TERM = origTerm
     else delete process.env.TERM
-    if (origTermProgram !== undefined)
+    if (origTermProgram !== undefined) {
       process.env.TERM_PROGRAM = origTermProgram
-    else delete process.env.TERM_PROGRAM
+    } else delete process.env.TERM_PROGRAM
     if (origKitty !== undefined) process.env.KITTY_WINDOW_ID = origKitty
     else delete process.env.KITTY_WINDOW_ID
   })
