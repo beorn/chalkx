@@ -9,7 +9,7 @@
  * - Lifecycle: Disposable pattern via Symbol.dispose
  */
 import { Chalk } from "chalk";
-import { detectColor, detectCursor, detectInput, detectUnicode } from "./detection.js";
+import { detectColor, detectCursor, detectInput, detectUnicode, } from "./detection.js";
 // =============================================================================
 // ANSI Utilities
 // =============================================================================
@@ -53,7 +53,13 @@ export function createTerm(options = {}) {
     const cachedColor = options.color !== undefined ? options.color : detectColor(stdout);
     const cachedUnicode = options.unicode ?? detectUnicode();
     // Create chalk instance with appropriate color level
-    const chalkLevel = cachedColor === null ? 0 : cachedColor === "basic" ? 1 : cachedColor === "256" ? 2 : 3;
+    const chalkLevel = cachedColor === null
+        ? 0
+        : cachedColor === "basic"
+            ? 1
+            : cachedColor === "256"
+                ? 2
+                : 3;
     const chalkInstance = new Chalk({ level: chalkLevel });
     // Disposed flag
     let disposed = false;

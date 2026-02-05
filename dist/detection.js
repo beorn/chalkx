@@ -124,7 +124,9 @@ export function detectColor(stdout) {
         return "truecolor";
     }
     // xterm-color variants get basic colors
-    if (term.includes("xterm") || term.includes("color") || term.includes("ansi")) {
+    if (term.includes("xterm") ||
+        term.includes("color") ||
+        term.includes("ansi")) {
         return "basic";
     }
     // CI environments usually support basic colors
@@ -155,7 +157,8 @@ export function detectUnicode() {
     }
     // Check locale for UTF-8
     const lang = process.env.LANG ?? process.env.LC_ALL ?? process.env.LC_CTYPE ?? "";
-    if (lang.toLowerCase().includes("utf-8") || lang.toLowerCase().includes("utf8")) {
+    if (lang.toLowerCase().includes("utf-8") ||
+        lang.toLowerCase().includes("utf8")) {
         return true;
     }
     // Windows Terminal
@@ -188,7 +191,12 @@ export function detectUnicode() {
 /**
  * Known terminals with extended underline support.
  */
-const EXTENDED_UNDERLINE_TERMS = ["xterm-ghostty", "xterm-kitty", "wezterm", "xterm-256color"];
+const EXTENDED_UNDERLINE_TERMS = [
+    "xterm-ghostty",
+    "xterm-kitty",
+    "wezterm",
+    "xterm-256color",
+];
 /**
  * Known terminal programs with extended underline support.
  */
@@ -196,20 +204,25 @@ const EXTENDED_UNDERLINE_PROGRAMS = ["Ghostty", "iTerm.app", "WezTerm"];
 /**
  * Detect if terminal supports extended underline styles.
  * (curly, dotted, dashed, double)
+ *
+ * Extended underlines use SGR 4:x (style) and SGR 58;2;r;g;b (color).
+ * These are NOT supported by Terminal.app, which misinterprets them
+ * as background colors causing visual artifacts.
  */
 export function detectExtendedUnderline() {
     const term = process.env.TERM ?? "";
     const termProgram = process.env.TERM_PROGRAM ?? "";
+    // Apple Terminal doesn't support extended underlines - check FIRST
+    // because it often sets TERM=xterm-256color which would otherwise match
+    if (termProgram === "Apple_Terminal") {
+        return false;
+    }
     // Check TERM variable for known modern terminals
     if (EXTENDED_UNDERLINE_TERMS.some((t) => term.includes(t))) {
         return true;
     }
     // Check TERM_PROGRAM for known terminal applications
     if (EXTENDED_UNDERLINE_PROGRAMS.some((p) => termProgram.includes(p))) {
-        // Apple Terminal doesn't actually support extended underlines
-        if (termProgram === "Apple_Terminal") {
-            return false;
-        }
         return true;
     }
     // Kitty sets KITTY_WINDOW_ID

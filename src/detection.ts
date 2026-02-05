@@ -245,10 +245,20 @@ const EXTENDED_UNDERLINE_PROGRAMS = ["Ghostty", "iTerm.app", "WezTerm"]
 /**
  * Detect if terminal supports extended underline styles.
  * (curly, dotted, dashed, double)
+ *
+ * Extended underlines use SGR 4:x (style) and SGR 58;2;r;g;b (color).
+ * These are NOT supported by Terminal.app, which misinterprets them
+ * as background colors causing visual artifacts.
  */
 export function detectExtendedUnderline(): boolean {
   const term = process.env.TERM ?? ""
   const termProgram = process.env.TERM_PROGRAM ?? ""
+
+  // Apple Terminal doesn't support extended underlines - check FIRST
+  // because it often sets TERM=xterm-256color which would otherwise match
+  if (termProgram === "Apple_Terminal") {
+    return false
+  }
 
   // Check TERM variable for known modern terminals
   if (EXTENDED_UNDERLINE_TERMS.some((t) => term.includes(t))) {
@@ -257,10 +267,6 @@ export function detectExtendedUnderline(): boolean {
 
   // Check TERM_PROGRAM for known terminal applications
   if (EXTENDED_UNDERLINE_PROGRAMS.some((p) => termProgram.includes(p))) {
-    // Apple Terminal doesn't actually support extended underlines
-    if (termProgram === "Apple_Terminal") {
-      return false
-    }
     return true
   }
 

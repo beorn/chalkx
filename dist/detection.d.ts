@@ -39,6 +39,10 @@ export declare function detectUnicode(): boolean;
 /**
  * Detect if terminal supports extended underline styles.
  * (curly, dotted, dashed, double)
+ *
+ * Extended underlines use SGR 4:x (style) and SGR 58;2;r;g;b (color).
+ * These are NOT supported by Terminal.app, which misinterprets them
+ * as background colors causing visual artifacts.
  */
 export declare function detectExtendedUnderline(): boolean;
 //# sourceMappingURL=detection.d.ts.map

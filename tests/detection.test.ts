@@ -64,6 +64,16 @@ describe("terminal detection", () => {
       delete process.env.KITTY_WINDOW_ID
       expect(detectExtendedUnderline()).toBe(false)
     })
+
+    it("does not detect support for Apple_Terminal even with xterm-256color", () => {
+      // Apple Terminal sets TERM=xterm-256color, which is in EXTENDED_UNDERLINE_TERMS
+      // But Terminal.app does NOT support extended underlines (SGR 4:x, SGR 58)
+      // and misinterprets them as background colors
+      process.env.TERM = "xterm-256color"
+      process.env.TERM_PROGRAM = "Apple_Terminal"
+      delete process.env.KITTY_WINDOW_ID
+      expect(detectExtendedUnderline()).toBe(false)
+    })
   })
 
   describe("no support", () => {
