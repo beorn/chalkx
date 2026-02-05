@@ -45,6 +45,9 @@ export function patchConsole(
 ): PatchedConsole {
   const suppress = options?.suppress ?? false
   const entries: ConsoleEntry[] = []
+  // Snapshot must be a new reference on each change for useSyncExternalStore
+  // (React uses Object.is to detect changes — same reference = no re-render)
+  let snapshot: readonly ConsoleEntry[] = entries
   const subscribers = new Set<() => void>()
 
   // Save original methods
@@ -63,6 +66,7 @@ export function patchConsole(
         stream: STDERR_METHODS.has(method) ? "stderr" : "stdout",
       }
       entries.push(entry)
+      snapshot = entries.slice()
 
       // Call original unless suppressed (TUI mode)
       if (!suppress) {
@@ -82,7 +86,7 @@ export function patchConsole(
 
   return {
     getSnapshot(): readonly ConsoleEntry[] {
-      return entries
+      return snapshot
     },
 
     subscribe(onStoreChange: () => void): () => void {
