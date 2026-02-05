@@ -56,6 +56,20 @@ export function patchConsole(
     originals.set(method, console[method].bind(console))
   }
 
+  // Batch subscriber notifications to prevent synchronous feedback loops.
+  // Without batching, console.debug() during a React render triggers
+  // useSyncExternalStore → re-render → more console output → infinite loop.
+  let notifyPending = false
+
+  function scheduleNotify() {
+    if (notifyPending) return
+    notifyPending = true
+    queueMicrotask(() => {
+      notifyPending = false
+      subscribers.forEach((subscriber) => subscriber())
+    })
+  }
+
   // Replace with interceptors
   for (const method of METHODS) {
     const original = originals.get(method)!
@@ -73,8 +87,8 @@ export function patchConsole(
         original(...args)
       }
 
-      // Notify subscribers
-      subscribers.forEach((subscriber) => subscriber())
+      // Notify subscribers (batched via microtask)
+      scheduleNotify()
     }
   }
 
