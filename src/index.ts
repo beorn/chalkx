@@ -56,7 +56,11 @@ import { createTerm as _createTerm } from "./term.js"
 export const term = _createTerm()
 
 export { patchConsole } from "./patch-console.js"
-export type { PatchedConsole, PatchConsoleOptions } from "./patch-console.js"
+export type {
+  PatchedConsole,
+  PatchConsoleOptions,
+  ConsoleStats,
+} from "./patch-console.js"
 
 // =============================================================================
 // Types
