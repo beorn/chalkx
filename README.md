@@ -154,7 +154,6 @@ When using chalk with [inkx](https://github.com/beorn/inkx), mixing chalk backgr
 ```tsx
 import { bgOverride, chalk } from "@beorn/chalkx"
 import { Box, Text } from "inkx"
-
 ;<Box backgroundColor="cyan">
   <Text>{bgOverride(chalk.bgBlack("text"))}</Text>
 </Box>
