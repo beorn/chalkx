@@ -28,10 +28,7 @@ import type { UnderlineStyle, RGB } from "./types.js"
  * @param style - Underline style (default: "single")
  * @returns Styled text with ANSI codes
  */
-export function underline(
-  text: string,
-  style: UnderlineStyle = "single",
-): string {
+export function underline(text: string, style: UnderlineStyle = "single"): string {
   if (!detectExtendedUnderline() || style === "single") {
     return chalk.underline(text)
   }
@@ -117,12 +114,7 @@ export function doubleUnderline(text: string): string {
  * console.log(chalk.blue(underlineColor(255, 0, 0, 'blue text, red underline')));
  * ```
  */
-export function underlineColor(
-  r: number,
-  g: number,
-  b: number,
-  text: string,
-): string {
+export function underlineColor(r: number, g: number, b: number, text: string): string {
   if (!detectExtendedUnderline()) {
     // Fallback: just apply regular underline, ignore color
     return chalk.underline(text)
@@ -151,11 +143,7 @@ export function underlineColor(
  * console.log(chalk.yellow(styledUnderline('dashed', [255, 165, 0], 'warning')));
  * ```
  */
-export function styledUnderline(
-  style: UnderlineStyle,
-  rgb: RGB,
-  text: string,
-): string {
+export function styledUnderline(style: UnderlineStyle, rgb: RGB, text: string): string {
   if (!detectExtendedUnderline()) {
     return chalk.underline(text)
   }

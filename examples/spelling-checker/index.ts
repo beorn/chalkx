@@ -7,12 +7,7 @@
  * Run with: bun examples/spelling-checker/index.ts
  */
 
-import {
-  createTerm,
-  curlyUnderline,
-  styledUnderline,
-  hyperlink,
-} from "../../src/index.js"
+import { createTerm, curlyUnderline, styledUnderline, hyperlink } from "../../src/index.js"
 
 using term = createTerm()
 
@@ -52,9 +47,7 @@ console.log(highlightedText)
 // Show corrections
 console.log("\n" + term.bold("Suggested corrections:") + "\n")
 for (const [wrong, correct] of misspelledWords) {
-  console.log(
-    `  ${styledUnderline("curly", [255, 100, 100], wrong)} → ${term.green(correct)}`,
-  )
+  console.log(`  ${styledUnderline("curly", [255, 100, 100], wrong)} → ${term.green(correct)}`)
 }
 
 // Different error types with different underline styles
@@ -106,30 +99,16 @@ for (const line of codeLines) {
 }
 
 console.log("\n" + term.dim("Legend:"))
-console.log(
-  term.dim(`  ${styledUnderline("curly", [255, 100, 100], "red")} = error`),
-)
-console.log(
-  term.dim(
-    `  ${styledUnderline("curly", [255, 200, 100], "yellow")} = warning`,
-  ),
-)
-console.log(
-  term.dim(
-    `  ${styledUnderline("dashed", [100, 180, 255], "blue")} = suggestion`,
-  ),
-)
-console.log(
-  term.dim(`  ${styledUnderline("dotted", [180, 180, 180], "gray")} = hint`),
-)
+console.log(term.dim(`  ${styledUnderline("curly", [255, 100, 100], "red")} = error`))
+console.log(term.dim(`  ${styledUnderline("curly", [255, 200, 100], "yellow")} = warning`))
+console.log(term.dim(`  ${styledUnderline("dashed", [100, 180, 255], "blue")} = suggestion`))
+console.log(term.dim(`  ${styledUnderline("dotted", [180, 180, 180], "gray")} = hint`))
 
 // Hyperlinks for more info
 console.log("\n" + term.bold("Learn more:") + "\n")
 console.log(
   `  ${hyperlink("VS Code Diagnostics", "https://code.visualstudio.com/api/language-extensions/diagnostics")}`,
 )
-console.log(
-  `  ${hyperlink("LSP Specification", "https://microsoft.github.io/language-server-protocol/")}`,
-)
+console.log(`  ${hyperlink("LSP Specification", "https://microsoft.github.io/language-server-protocol/")}`)
 
 console.log("\n" + "=".repeat(60))

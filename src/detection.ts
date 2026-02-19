@@ -52,15 +52,7 @@ export function detectInput(stdin: NodeJS.ReadStream): boolean {
 /**
  * Known CI environments that may not support colors well.
  */
-const CI_ENVS = [
-  "CI",
-  "GITHUB_ACTIONS",
-  "GITLAB_CI",
-  "JENKINS_URL",
-  "BUILDKITE",
-  "CIRCLECI",
-  "TRAVIS",
-]
+const CI_ENVS = ["CI", "GITHUB_ACTIONS", "GITLAB_CI", "JENKINS_URL", "BUILDKITE", "CIRCLECI", "TRAVIS"]
 
 /**
  * Detect color level supported by terminal.
@@ -142,11 +134,7 @@ export function detectColor(stdout: NodeJS.WriteStream): ColorLevel | null {
   }
 
   // xterm-color variants get basic colors
-  if (
-    term.includes("xterm") ||
-    term.includes("color") ||
-    term.includes("ansi")
-  ) {
+  if (term.includes("xterm") || term.includes("color") || term.includes("ansi")) {
     return "basic"
   }
 
@@ -181,12 +169,8 @@ export function detectUnicode(): boolean {
   }
 
   // Check locale for UTF-8
-  const lang =
-    process.env.LANG ?? process.env.LC_ALL ?? process.env.LC_CTYPE ?? ""
-  if (
-    lang.toLowerCase().includes("utf-8") ||
-    lang.toLowerCase().includes("utf8")
-  ) {
+  const lang = process.env.LANG ?? process.env.LC_ALL ?? process.env.LC_CTYPE ?? ""
+  if (lang.toLowerCase().includes("utf-8") || lang.toLowerCase().includes("utf8")) {
     return true
   }
 
@@ -197,9 +181,7 @@ export function detectUnicode(): boolean {
 
   // Modern terminal programs
   const termProgram = process.env.TERM_PROGRAM ?? ""
-  if (
-    ["iTerm.app", "Ghostty", "WezTerm", "Apple_Terminal"].includes(termProgram)
-  ) {
+  if (["iTerm.app", "Ghostty", "WezTerm", "Apple_Terminal"].includes(termProgram)) {
     return true
   }
 
@@ -210,12 +192,7 @@ export function detectUnicode(): boolean {
 
   // Check TERM for modern terminals
   const term = process.env.TERM ?? ""
-  if (
-    term.includes("xterm") ||
-    term.includes("rxvt") ||
-    term.includes("screen") ||
-    term.includes("tmux")
-  ) {
+  if (term.includes("xterm") || term.includes("rxvt") || term.includes("screen") || term.includes("tmux")) {
     return true
   }
 
@@ -230,12 +207,7 @@ export function detectUnicode(): boolean {
 /**
  * Known terminals with extended underline support.
  */
-const EXTENDED_UNDERLINE_TERMS = [
-  "xterm-ghostty",
-  "xterm-kitty",
-  "wezterm",
-  "xterm-256color",
-]
+const EXTENDED_UNDERLINE_TERMS = ["xterm-ghostty", "xterm-kitty", "wezterm", "xterm-256color"]
 
 /**
  * Known terminal programs with extended underline support.

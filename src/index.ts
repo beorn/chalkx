@@ -56,11 +56,7 @@ import { createTerm as _createTerm } from "./term.js"
 export const term = _createTerm()
 
 export { patchConsole } from "./patch-console.js"
-export type {
-  PatchedConsole,
-  PatchConsoleOptions,
-  ConsoleStats,
-} from "./patch-console.js"
+export type { PatchedConsole, PatchConsoleOptions, ConsoleStats } from "./patch-console.js"
 
 // =============================================================================
 // Types
@@ -80,13 +76,7 @@ export type {
 // Detection Functions
 // =============================================================================
 
-export {
-  detectCursor,
-  detectInput,
-  detectColor,
-  detectUnicode,
-  detectExtendedUnderline,
-} from "./detection.js"
+export { detectCursor, detectInput, detectColor, detectUnicode, detectExtendedUnderline } from "./detection.js"
 
 // =============================================================================
 // Utilities

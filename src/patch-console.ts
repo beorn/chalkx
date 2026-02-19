@@ -59,10 +59,7 @@ export interface PatchConsoleOptions {
  * @param options.suppress - If true, don't call original methods (for TUI mode)
  * @param options.capture - If false, only count entries (no memory storage)
  */
-export function patchConsole(
-  console: Console,
-  options?: PatchConsoleOptions,
-): PatchedConsole {
+export function patchConsole(console: Console, options?: PatchConsoleOptions): PatchedConsole {
   const suppress = options?.suppress ?? false
   const capture = options?.capture ?? true
 

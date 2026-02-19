@@ -44,10 +44,7 @@ describe("hyperlink", () => {
     })
 
     it("handles vscode URLs", () => {
-      const result = hyperlink(
-        "Open in VS Code",
-        "vscode://file/path/to/file:10:5",
-      )
+      const result = hyperlink("Open in VS Code", "vscode://file/path/to/file:10:5")
       expect(result).toContain("vscode://file/path/to/file:10:5")
     })
   })
@@ -61,18 +58,12 @@ describe("hyperlink", () => {
     })
 
     it("handles URL with query parameters", () => {
-      const result = hyperlink(
-        "Search",
-        "https://example.com/search?q=test&page=1",
-      )
+      const result = hyperlink("Search", "https://example.com/search?q=test&page=1")
       expect(result).toContain("https://example.com/search?q=test&page=1")
     })
 
     it("handles URL with special characters", () => {
-      const result = hyperlink(
-        "Special",
-        "https://example.com/path%20with%20spaces",
-      )
+      const result = hyperlink("Special", "https://example.com/path%20with%20spaces")
       expect(result).toContain("https://example.com/path%20with%20spaces")
     })
 

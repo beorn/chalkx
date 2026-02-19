@@ -53,11 +53,7 @@ export const UNDERLINE_COLOR_RESET = "\x1b[59m"
  * Build underline color escape code for RGB values.
  * Format: \x1b[58:2::r:g:bm (SGR 58 with RGB color space)
  */
-export function buildUnderlineColorCode(
-  r: number,
-  g: number,
-  b: number,
-): string {
+export function buildUnderlineColorCode(r: number, g: number, b: number): string {
   return `\x1b[58:2::${r}:${g}:${b}m`
 }
 

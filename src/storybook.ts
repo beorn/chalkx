@@ -97,15 +97,9 @@ console.log()
 
 subsection("With text color (independent)")
 
-console.log(
-  ` ${term.red(underlineColor(0, 255, 0, "Red text, green underline"))}`,
-)
-console.log(
-  ` ${term.blue(underlineColor(255, 165, 0, "Blue text, orange underline"))}`,
-)
-console.log(
-  ` ${term.white(underlineColor(255, 0, 0, "White text, red underline"))}`,
-)
+console.log(` ${term.red(underlineColor(0, 255, 0, "Red text, green underline"))}`)
+console.log(` ${term.blue(underlineColor(255, 165, 0, "Blue text, orange underline"))}`)
+console.log(` ${term.white(underlineColor(255, 0, 0, "White text, red underline"))}`)
 
 // =============================================================================
 // Combined Style + Color
@@ -115,35 +109,21 @@ section("Combined Style + Color")
 
 subsection("Curly with colors (like spell-check)")
 
-console.log(
-  ` Spelling error: ${styledUnderline("curly", [255, 0, 0], "teh")} → the`,
-)
-console.log(
-  ` Grammar issue:  ${styledUnderline("curly", [0, 128, 255], "alot")} → a lot`,
-)
-console.log(
-  ` Style warning:  ${styledUnderline("curly", [0, 180, 0], "very unique")} → unique`,
-)
+console.log(` Spelling error: ${styledUnderline("curly", [255, 0, 0], "teh")} → the`)
+console.log(` Grammar issue:  ${styledUnderline("curly", [0, 128, 255], "alot")} → a lot`)
+console.log(` Style warning:  ${styledUnderline("curly", [0, 180, 0], "very unique")} → unique`)
 console.log()
 
 subsection("Dotted with colors (embedded content)")
 
-console.log(
-  ` From inbox:    ${styledUnderline("dotted", [100, 149, 237], "Review docs")}`,
-)
-console.log(
-  ` From projects: ${styledUnderline("dotted", [147, 112, 219], "Sprint planning")}`,
-)
+console.log(` From inbox:    ${styledUnderline("dotted", [100, 149, 237], "Review docs")}`)
+console.log(` From projects: ${styledUnderline("dotted", [147, 112, 219], "Sprint planning")}`)
 console.log()
 
 subsection("Dashed with colors (drafts/tentative)")
 
-console.log(
-  ` Draft:     ${styledUnderline("dashed", [128, 128, 128], "WIP: New feature")}`,
-)
-console.log(
-  ` Tentative: ${styledUnderline("dashed", [169, 169, 169], "Maybe: Refactor auth")}`,
-)
+console.log(` Draft:     ${styledUnderline("dashed", [128, 128, 128], "WIP: New feature")}`)
+console.log(` Tentative: ${styledUnderline("dashed", [169, 169, 169], "Maybe: Refactor auth")}`)
 
 // =============================================================================
 // Hyperlinks
@@ -154,28 +134,16 @@ section("OSC 8 Hyperlinks")
 subsection("Basic hyperlinks (click to open in terminal)")
 
 console.log(` Website: ${hyperlink("Google", "https://google.com")}`)
-console.log(
-  ` File:    ${hyperlink("README.md", "file:///Users/beorn/README.md")}`,
-)
-console.log(
-  ` Custom:  ${hyperlink("Open in VSCode", "vscode://file/path/to/file")}`,
-)
+console.log(` File:    ${hyperlink("README.md", "file:///Users/beorn/README.md")}`)
+console.log(` Custom:  ${hyperlink("Open in VSCode", "vscode://file/path/to/file")}`)
 console.log()
 
 subsection("Styled hyperlinks")
 
-console.log(
-  ` Underlined: ${term.underline(hyperlink("Underlined link", "https://example.com"))}`,
-)
-console.log(
-  ` Colored:    ${term.blue(hyperlink("Blue link", "https://example.com"))}`,
-)
-console.log(
-  ` Bold:       ${term.bold(hyperlink("Bold link", "https://example.com"))}`,
-)
-console.log(
-  ` Combined:   ${term.bold.blue.underline(hyperlink("Styled link", "https://example.com"))}`,
-)
+console.log(` Underlined: ${term.underline(hyperlink("Underlined link", "https://example.com"))}`)
+console.log(` Colored:    ${term.blue(hyperlink("Blue link", "https://example.com"))}`)
+console.log(` Bold:       ${term.bold(hyperlink("Bold link", "https://example.com"))}`)
+console.log(` Combined:   ${term.bold.blue.underline(hyperlink("Styled link", "https://example.com"))}`)
 
 // =============================================================================
 // ANSI Utilities
@@ -206,34 +174,22 @@ section("Practical Use Cases")
 subsection("IDE-style error highlighting")
 
 console.log(` const ${styledUnderline("curly", [255, 0, 0], "x")} = undefined;`)
-console.log(
-  `       ${term.red("^")} ${term.dim("Variable 'x' is declared but never used")}`,
-)
+console.log(`       ${term.red("^")} ${term.dim("Variable 'x' is declared but never used")}`)
 console.log()
 
 subsection("Task manager styling")
 
 console.log(` ${term.green("✓")} ${term.dim.strikethrough("Completed task")}`)
-console.log(
-  ` ${term.yellow("◐")} ${styledUnderline("curly", [255, 180, 0], "Due today: Submit report")}`,
-)
-console.log(
-  ` ${term.red("○")} ${styledUnderline("curly", [255, 80, 80], "Overdue: Fix critical bug")}`,
-)
-console.log(
-  ` ${term.blue("○")} ${dottedUnderline("Embedded from [[Projects]]")}`,
-)
+console.log(` ${term.yellow("◐")} ${styledUnderline("curly", [255, 180, 0], "Due today: Submit report")}`)
+console.log(` ${term.red("○")} ${styledUnderline("curly", [255, 80, 80], "Overdue: Fix critical bug")}`)
+console.log(` ${term.blue("○")} ${dottedUnderline("Embedded from [[Projects]]")}`)
 console.log(` ${term.gray("○")} ${dashedUnderline("Draft: New feature idea")}`)
 console.log()
 
 subsection("Documentation with clickable links")
 
-console.log(
-  ` See ${hyperlink("API Reference", "https://docs.example.com/api")} for details.`,
-)
-console.log(
-  ` Implementation in ${hyperlink("src/index.ts", "file:///path/src/index.ts")}`,
-)
+console.log(` See ${hyperlink("API Reference", "https://docs.example.com/api")} for details.`)
+console.log(` Implementation in ${hyperlink("src/index.ts", "file:///path/src/index.ts")}`)
 
 // =============================================================================
 // Summary

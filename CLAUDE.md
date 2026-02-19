@@ -14,13 +14,7 @@ Core terminal abstraction with Disposable pattern support plus extended ANSI fea
 import { createTerm, patchConsole } from "chalkx"
 
 // Types
-import type {
-  Term,
-  StyleChain,
-  PatchedConsole,
-  ColorLevel,
-  ConsoleEntry,
-} from "chalkx"
+import type { Term, StyleChain, PatchedConsole, ColorLevel, ConsoleEntry } from "chalkx"
 
 // Detection (usually accessed via term instance)
 import { detectColor, detectCursor, detectInput, detectUnicode } from "chalkx"
