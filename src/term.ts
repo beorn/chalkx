@@ -9,7 +9,7 @@
  * - Lifecycle: Disposable pattern via Symbol.dispose
  */
 
-import chalk, { Chalk, type ChalkInstance } from "chalk"
+import { Chalk, type ChalkInstance } from "chalk"
 import type { ColorLevel, CreateTermOptions } from "./types.js"
 import { detectColor, detectCursor, detectInput, detectUnicode } from "./detection.js"
 
@@ -266,8 +266,6 @@ export function createTerm(options: CreateTermOptions = {}): Term {
   const chalkLevel = cachedColor === null ? 0 : cachedColor === "basic" ? 1 : cachedColor === "256" ? 2 : 3
   const chalkInstance = new Chalk({ level: chalkLevel })
 
-  // Disposed flag
-  let disposed = false
 
   // Base term object with methods
   const termBase = {
@@ -294,7 +292,7 @@ export function createTerm(options: CreateTermOptions = {}): Term {
 
     // Disposable
     [Symbol.dispose]: () => {
-      disposed = true
+      // no-op — placeholder for future cleanup logic
     },
   }
 
