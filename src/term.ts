@@ -266,7 +266,6 @@ export function createTerm(options: CreateTermOptions = {}): Term {
   const chalkLevel = cachedColor === null ? 0 : cachedColor === "basic" ? 1 : cachedColor === "256" ? 2 : 3
   const chalkInstance = new Chalk({ level: chalkLevel })
 
-
   // Base term object with methods
   const termBase = {
     // Detection methods
