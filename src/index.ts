@@ -76,7 +76,16 @@ export type {
 // Detection Functions
 // =============================================================================
 
-export { detectCursor, detectInput, detectColor, detectUnicode, detectExtendedUnderline } from "./detection.js"
+export {
+  detectCursor,
+  detectInput,
+  detectColor,
+  detectUnicode,
+  detectExtendedUnderline,
+  detectTerminalCaps,
+  defaultCaps,
+} from "./detection.js"
+export type { TerminalCaps } from "./detection.js"
 
 // =============================================================================
 // Utilities

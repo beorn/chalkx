@@ -7,8 +7,10 @@
  * - Color level (basic, 256, truecolor)
  * - Unicode support (can render unicode symbols)
  * - Extended underline support (curly, dotted, etc)
+ * - Terminal capabilities profile (TerminalCaps)
  */
 
+import { spawnSync } from "child_process"
 import type { ColorLevel } from "./types.js"
 
 // =============================================================================
@@ -249,4 +251,179 @@ export function detectExtendedUnderline(): boolean {
 
   // Default to false for unknown terminals
   return false
+}
+
+// =============================================================================
+// Terminal Capabilities Profile
+// =============================================================================
+
+export interface TerminalCaps {
+  /** Terminal program name (from TERM_PROGRAM) */
+  program: string
+  /** TERM value */
+  term: string
+  /** Color support level */
+  colorLevel: "none" | "basic" | "256" | "truecolor"
+  /** Kitty keyboard protocol supported */
+  kittyKeyboard: boolean
+  /** Kitty graphics protocol (inline images) */
+  kittyGraphics: boolean
+  /** Sixel graphics supported */
+  sixel: boolean
+  /** OSC 52 clipboard */
+  osc52: boolean
+  /** OSC 8 hyperlinks */
+  hyperlinks: boolean
+  /** OSC 9/99 notifications */
+  notifications: boolean
+  /** Bracketed paste mode */
+  bracketedPaste: boolean
+  /** SGR mouse tracking */
+  mouse: boolean
+  /** Synchronized output (DEC 2026) */
+  syncOutput: boolean
+  /** Unicode/emoji support */
+  unicode: boolean
+  /** SGR 4:x underline style subparameters (curly, dotted, dashed) */
+  underlineStyles: boolean
+  /** SGR 58 underline color */
+  underlineColor: boolean
+  /** Text-presentation emoji (⚠, ☑, ⭐) rendered as 2-wide.
+   * Modern terminals (Ghostty, iTerm, Kitty) render these at emoji width (2 cells).
+   * Terminal.app renders them at text width (1 cell). */
+  textEmojiWide: boolean
+  /** OSC 66 text sizing protocol likely supported (Kitty 0.40+, Ghostty) */
+  textSizingSupported: boolean
+  /** Heuristic: likely dark background (for theme selection) */
+  darkBackground: boolean
+  /** Heuristic: likely has Nerd Font installed (for icon selection) */
+  nerdfont: boolean
+}
+
+/**
+ * Default capabilities (assumes modern terminal with full support).
+ */
+export function defaultCaps(): TerminalCaps {
+  return {
+    program: "",
+    term: "",
+    colorLevel: "truecolor",
+    kittyKeyboard: false,
+    kittyGraphics: false,
+    sixel: false,
+    osc52: false,
+    hyperlinks: false,
+    notifications: false,
+    bracketedPaste: true,
+    mouse: true,
+    syncOutput: false,
+    unicode: true,
+    underlineStyles: true,
+    underlineColor: true,
+    textEmojiWide: true,
+    textSizingSupported: false,
+    darkBackground: true,
+    nerdfont: false,
+  }
+}
+
+/**
+ * Check if macOS is in dark mode by reading the system appearance preference.
+ * Uses `defaults read -g AppleInterfaceStyle` — returns "Dark" when dark mode
+ * is active, exits non-zero when light mode. ~2ms via spawnSync.
+ */
+function detectMacOSDarkMode(): boolean {
+  try {
+    const result = spawnSync("defaults", ["read", "-g", "AppleInterfaceStyle"], {
+      encoding: "utf-8",
+      timeout: 500,
+    })
+    return result.stdout?.trim() === "Dark"
+  } catch {
+    return false
+  }
+}
+
+/** Detect terminal capabilities from environment variables.
+ * Synchronous. Minimal I/O: may run `defaults` on macOS for Apple_Terminal.
+ */
+export function detectTerminalCaps(): TerminalCaps {
+  const program = process.env.TERM_PROGRAM ?? ""
+  const term = process.env.TERM ?? ""
+  const colorTerm = process.env.COLORTERM ?? ""
+  const noColor = process.env.NO_COLOR !== undefined
+
+  const isAppleTerminal = program === "Apple_Terminal"
+
+  let colorLevel: TerminalCaps["colorLevel"] = "none"
+  if (!noColor) {
+    if (isAppleTerminal) {
+      colorLevel = "256"
+    } else if (colorTerm === "truecolor" || colorTerm === "24bit") {
+      colorLevel = "truecolor"
+    } else if (term.includes("256color")) {
+      colorLevel = "256"
+    } else if (process.stdout?.isTTY) {
+      colorLevel = "basic"
+    }
+  }
+
+  const isKitty = term === "xterm-kitty"
+  const isITerm = program === "iTerm.app"
+  const isGhostty = program === "ghostty"
+  const isWezTerm = program === "WezTerm"
+  const isAlacritty = program === "Alacritty"
+  const isFoot = term === "foot" || term === "foot-extra"
+  const isModern = isKitty || isITerm || isGhostty || isWezTerm || isFoot
+
+  // Kitty v0.40+ supports OSC 66 text sizing
+  let isKittyWithTextSizing = false
+  if (isKitty) {
+    const version = process.env.TERM_PROGRAM_VERSION ?? ""
+    const parts = version.split(".")
+    const major = Number(parts[0]) || 0
+    const minor = Number(parts[1]) || 0
+    isKittyWithTextSizing = major > 0 || (major === 0 && minor >= 40)
+  }
+
+  let darkBackground = !isAppleTerminal
+  const colorFgBg = process.env.COLORFGBG
+  if (colorFgBg) {
+    const parts = colorFgBg.split(";")
+    const bg = parseInt(parts[parts.length - 1] ?? "", 10)
+    if (!isNaN(bg)) {
+      darkBackground = bg < 7
+    }
+  } else if (isAppleTerminal) {
+    darkBackground = detectMacOSDarkMode()
+  }
+
+  let nerdfont = isModern || isAlacritty
+  const nfEnv = process.env.NERDFONT
+  if (nfEnv === "0" || nfEnv === "false") nerdfont = false
+  else if (nfEnv === "1" || nfEnv === "true") nerdfont = true
+
+  const underlineExtensions = isModern || isAlacritty
+
+  return {
+    program,
+    term,
+    colorLevel,
+    kittyKeyboard: isKitty || isGhostty || isWezTerm || isFoot,
+    kittyGraphics: isKitty || isGhostty,
+    sixel: isFoot || isWezTerm,
+    osc52: isModern || isAlacritty,
+    hyperlinks: isModern || isAlacritty,
+    notifications: isITerm || isKitty,
+    bracketedPaste: true,
+    mouse: true,
+    syncOutput: isModern || isAlacritty,
+    unicode: true,
+    underlineStyles: underlineExtensions,
+    underlineColor: underlineExtensions,
+    textEmojiWide: !isAppleTerminal,
+    textSizingSupported: isKittyWithTextSizing || isGhostty,
+    darkBackground,
+    nerdfont,
+  }
 }

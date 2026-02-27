@@ -10,8 +10,8 @@
  */
 
 import { Chalk, type ChalkInstance } from "chalk"
-import type { ColorLevel, CreateTermOptions } from "./types.js"
-import { detectColor, detectCursor, detectInput, detectUnicode } from "./detection.js"
+import type { ColorLevel, CreateTermOptions, TerminalCaps } from "./types.js"
+import { defaultCaps, detectColor, detectCursor, detectInput, detectTerminalCaps, detectUnicode } from "./detection.js"
 
 // =============================================================================
 // ANSI Utilities
@@ -176,6 +176,13 @@ export interface Term extends Disposable, StyleChain {
    */
   hasUnicode(): boolean
 
+  /**
+   * Terminal capabilities profile.
+   * Detected when stdin is a TTY, undefined otherwise.
+   * Override via createTerm({ caps: { ... } }).
+   */
+  readonly caps: TerminalCaps | undefined
+
   // -------------------------------------------------------------------------
   // Dimensions
   // -------------------------------------------------------------------------
@@ -262,6 +269,13 @@ export function createTerm(options: CreateTermOptions = {}): Term {
   const cachedColor = options.color !== undefined ? options.color : detectColor(stdout)
   const cachedUnicode = options.unicode ?? detectUnicode()
 
+  // Detect terminal capabilities (only when interactive)
+  const detectedCaps = options.caps
+    ? { ...defaultCaps(), ...options.caps }
+    : stdin.isTTY
+      ? detectTerminalCaps()
+      : undefined
+
   // Create chalk instance with appropriate color level
   const chalkLevel = cachedColor === null ? 0 : cachedColor === "basic" ? 1 : cachedColor === "256" ? 2 : 3
   const chalkInstance = new Chalk({ level: chalkLevel })
@@ -273,6 +287,9 @@ export function createTerm(options: CreateTermOptions = {}): Term {
     hasInput: () => cachedInput,
     hasColor: () => cachedColor,
     hasUnicode: () => cachedUnicode,
+
+    // Terminal capabilities
+    caps: detectedCaps,
 
     // Streams
     stdout,

@@ -2,6 +2,8 @@
  * Type definitions for @beorn/chalkx
  */
 
+import type { TerminalCaps } from "./detection.js"
+
 // =============================================================================
 // Color Types
 // =============================================================================
@@ -86,4 +88,10 @@ export interface CreateTermOptions {
   color?: ColorLevel | null // override hasColor()
   unicode?: boolean // override hasUnicode()
   cursor?: boolean // override hasCursor()
+
+  // Terminal capabilities override
+  caps?: Partial<TerminalCaps>
 }
+
+// Re-export TerminalCaps from detection for convenience
+export type { TerminalCaps } from "./detection.js"
