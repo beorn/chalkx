@@ -41,6 +41,8 @@
     "build": "tsc",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
+    "ci": "bun run typecheck && bun test",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "storybook": "bun src/storybook.ts"
   },
   "dependencies": {
