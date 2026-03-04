@@ -162,6 +162,22 @@ try {
 }
 ```
 
+## Type-Safe Colors
+
+```ts
+import type { Color, AnsiColorName } from "chalkx"
+
+// Color is the union of all supported color formats:
+// AnsiColorName | HexColor | RgbColor | ThemeToken | (string & {})
+const c: Color = "$primary"  // theme token
+const c: Color = "#ff0000"   // hex
+const c: Color = "red"       // ANSI name
+```
+
+## Lazy Detection
+
+macOS dark mode detection (`defaults read`) is cached — the subprocess only runs once per process, not per `createTerm()` call. The global `term` singleton is also lazy (Proxy-based) — no detection runs until first property access.
+
 ## Key Types
 
 | Type             | Description                                          |
@@ -171,6 +187,8 @@ try {
 | `PatchedConsole` | Console interceptor with getSnapshot/subscribe       |
 | `ColorLevel`     | `'basic' \| '256' \| 'truecolor'`                    |
 | `ConsoleEntry`   | `{ method, args, stream }`                           |
+| `Color`          | Union: `AnsiColorName \| HexColor \| RgbColor \| ThemeToken \| (string & {})` |
+| `AnsiColorName`  | String literal union of all ANSI color names         |
 
 ## Detection Details
 
