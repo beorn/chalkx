@@ -41,8 +41,11 @@ export { createTerm } from "./term.js"
 export type { Term, StyleChain } from "./term.js"
 
 import { createTerm as _createTerm } from "./term.js"
+import type { Term } from "./term.js"
+
 /**
- * Default term instance for convenience.
+ * Default term instance for convenience, lazily initialized on first access.
+ * This avoids running terminal detection (including spawnSync) at import time.
  * Use this for simple scripts. For apps, prefer createTerm() with `using`.
  *
  * @example
@@ -53,7 +56,21 @@ import { createTerm as _createTerm } from "./term.js"
  * if (term.hasColor()) { ... }
  * ```
  */
-export const term = _createTerm()
+let _lazyTerm: Term | undefined
+export const term: Term = new Proxy({} as Term, {
+  get(_target, prop, receiver) {
+    if (!_lazyTerm) _lazyTerm = _createTerm()
+    return Reflect.get(_lazyTerm, prop, receiver)
+  },
+  apply(_target, thisArg, args) {
+    if (!_lazyTerm) _lazyTerm = _createTerm()
+    return Reflect.apply(_lazyTerm as unknown as (...args: unknown[]) => unknown, thisArg, args)
+  },
+  has(_target, prop) {
+    if (!_lazyTerm) _lazyTerm = _createTerm()
+    return Reflect.has(_lazyTerm, prop)
+  },
+})
 
 export { patchConsole } from "./patch-console.js"
 export type { PatchedConsole, PatchConsoleOptions, ConsoleStats } from "./patch-console.js"
@@ -66,6 +83,8 @@ export type {
   UnderlineStyle,
   RGB,
   ColorLevel,
+  Color,
+  AnsiColorName,
   StyleOptions,
   ConsoleMethod,
   ConsoleEntry,
@@ -114,7 +133,7 @@ export {
 export { hyperlink } from "./hyperlink.js"
 
 // =============================================================================
-// Background Override (for inkx compatibility)
+// Background Override — Compose styled text inside Box with backgroundColor
 // =============================================================================
 
 /**
@@ -125,22 +144,39 @@ export { hyperlink } from "./hyperlink.js"
 export const BG_OVERRIDE_CODE = 9999
 
 /**
- * Wrap text with a marker that tells inkx this background color is intentional.
+ * Compose styled text with an explicit background inside a Box that has its own
+ * `backgroundColor`. This is the correct way to layer chalk/term background
+ * colors on top of an inkx Box background.
  *
- * Use this when you deliberately want to use chalk.bg* inside an inkx Box
- * that also has backgroundColor set. Without this wrapper, inkx will throw
- * (by default) because mixing both creates visual artifacts.
+ * Without `bgOverride`, inkx throws (by default) when it detects both an ANSI
+ * background in the text content AND a `backgroundColor` prop on an ancestor
+ * Box, because the two conflict and produce visual artifacts (the ANSI bg
+ * only covers the text, leaving gaps at line edges).
+ *
+ * `bgOverride` wraps the text with a private SGR marker that tells inkx
+ * "this background is intentional — don't throw." Use it when you need
+ * pixel-precise background control within a styled container.
+ *
+ * @param text - Text containing ANSI background codes (e.g. from `chalk.bgBlack()`)
+ * @returns The same text prefixed with a marker SGR code
  *
  * @example
  * ```tsx
- * // Normally this throws because both inkx bg AND chalk bg are set:
+ * import { bgOverride } from 'chalkx'
+ *
+ * // Without bgOverride — inkx throws:
  * <Box backgroundColor="cyan">
  *   <Text>{chalk.bgBlack('text')}</Text>  // Error!
  * </Box>
  *
- * // With bgOverride, you're saying "I know what I'm doing":
+ * // With bgOverride — explicitly allowed:
  * <Box backgroundColor="cyan">
  *   <Text>{bgOverride(chalk.bgBlack('text'))}</Text>  // OK
+ * </Box>
+ *
+ * // Also works with term styling:
+ * <Box backgroundColor="$surface">
+ *   <Text>{bgOverride(term.bgRgb(30, 30, 30)('highlighted'))}</Text>
  * </Box>
  * ```
  */

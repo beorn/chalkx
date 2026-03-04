@@ -22,6 +22,65 @@ export type ColorLevel = "basic" | "256" | "truecolor"
  */
 export type RGB = [r: number, g: number, b: number]
 
+/**
+ * Standard ANSI color names (the 16 base colors).
+ * These map to SGR 30-37 (foreground) and 40-47 (background),
+ * plus their bright variants (SGR 90-97, 100-107).
+ */
+export type AnsiColorName =
+  | "black"
+  | "red"
+  | "green"
+  | "yellow"
+  | "blue"
+  | "magenta"
+  | "cyan"
+  | "white"
+  | "gray"
+  | "grey"
+  | "blackBright"
+  | "redBright"
+  | "greenBright"
+  | "yellowBright"
+  | "blueBright"
+  | "magentaBright"
+  | "cyanBright"
+  | "whiteBright"
+
+/**
+ * Hex color string pattern.
+ * Accepts 3-digit (#rgb) and 6-digit (#rrggbb) hex colors.
+ */
+type HexColor = `#${string}`
+
+/**
+ * RGB function-style color string pattern.
+ * Format: rgb(r,g,b) where r, g, b are 0-255.
+ */
+type RgbColor = `rgb(${string})`
+
+/**
+ * Theme token color string pattern.
+ * Format: $name — resolved against the active theme at render time.
+ * Examples: $primary, $surface, $error, $bg, $fg, $muted-fg
+ */
+type ThemeToken = `$${string}`
+
+/**
+ * Type-safe color value accepted by chalkx APIs.
+ *
+ * Accepts:
+ * - ANSI color names: `"red"`, `"cyan"`, `"whiteBright"`, etc.
+ * - Hex colors: `"#ff0000"`, `"#f00"`
+ * - RGB function: `"rgb(255, 0, 0)"`
+ * - Theme tokens: `"$primary"`, `"$error"`, `"$surface-fg"`
+ * - Any other string (for forward compatibility with custom color schemes)
+ *
+ * The union of known literals provides autocompletion in editors while
+ * the `string & {}` fallback allows arbitrary color strings.
+ */
+export type Color = AnsiColorName | HexColor | RgbColor | ThemeToken | (string & {})
+
 // =============================================================================
 // Underline Types
 // =============================================================================
@@ -45,8 +104,8 @@ export type UnderlineStyle = "single" | "double" | "curly" | "dotted" | "dashed"
  * Style options for term.style() method.
  */
 export interface StyleOptions {
-  color?: string
-  bgColor?: string
+  color?: Color
+  bgColor?: Color
   bold?: boolean
   dim?: boolean
   italic?: boolean

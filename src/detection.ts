@@ -328,20 +328,32 @@ export function defaultCaps(): TerminalCaps {
 }
 
 /**
+ * Cached result of macOS dark mode detection.
+ * Computed lazily on first access to avoid spawnSync at module load time.
+ */
+let cachedMacOSDarkMode: boolean | undefined
+
+/**
  * Check if macOS is in dark mode by reading the system appearance preference.
  * Uses `defaults read -g AppleInterfaceStyle` — returns "Dark" when dark mode
  * is active, exits non-zero when light mode. ~2ms via spawnSync.
+ *
+ * Result is cached after first call to avoid repeated process spawns.
  */
 function detectMacOSDarkMode(): boolean {
+  if (cachedMacOSDarkMode !== undefined) return cachedMacOSDarkMode
+
   try {
     const result = spawnSync("defaults", ["read", "-g", "AppleInterfaceStyle"], {
       encoding: "utf-8",
       timeout: 500,
     })
-    return result.stdout?.trim() === "Dark"
+    cachedMacOSDarkMode = result.stdout?.trim() === "Dark"
   } catch {
-    return false
+    cachedMacOSDarkMode = false
   }
+
+  return cachedMacOSDarkMode
 }
 
 /** Detect terminal capabilities from environment variables.
