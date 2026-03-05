@@ -191,7 +191,7 @@ export const BG_OVERRIDE_CODE = 9999
  *
  * @example
  * ```tsx
- * import { bgOverride } from 'chalkx'
+ * import { bgOverride } from '@hightea/chalk'
  *
  * // Without bgOverride — inkx throws:
  * <Box backgroundColor="cyan">
