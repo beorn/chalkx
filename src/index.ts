@@ -133,6 +133,35 @@ export {
 export { hyperlink } from "./hyperlink.js"
 
 // =============================================================================
+// ANSI Terminal Control Helpers
+// =============================================================================
+
+export {
+  enterAltScreen,
+  leaveAltScreen,
+  clearScreen,
+  clearLine,
+  cursorTo,
+  cursorHome,
+  cursorHide,
+  cursorShow,
+  cursorStyle,
+  setTitle,
+  enableMouse,
+  disableMouse,
+  enableBracketedPaste,
+  disableBracketedPaste,
+  enableSyncUpdate,
+  disableSyncUpdate,
+  setScrollRegion,
+  resetScrollRegion,
+  scrollUp,
+  scrollDown,
+  enableKittyKeyboard,
+  disableKittyKeyboard,
+} from "./ansi.js"
+
+// =============================================================================
 // Background Override — Compose styled text inside Box with backgroundColor
 // =============================================================================
 
